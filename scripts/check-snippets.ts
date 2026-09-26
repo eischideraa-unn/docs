@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
@@ -17,53 +17,87 @@ const repoRoot = process.cwd();
 const checkableLanguages = new Set(["ts", "tsx", "typescript", "js", "javascript"]);
 const ignoredDirs = new Set([".git", ".github", "node_modules", ".next", "dist", "build"]);
 
-const ambientPrelude = `
-declare module "redis";
+const typedPrelude = `
+import { Wraith, WraithAgent, Chain } from "@wraith-protocol/sdk";
+import * as evm from "@wraith-protocol/sdk/chains/evm";
+import * as stellar from "@wraith-protocol/sdk/chains/stellar";
+import * as solana from "@wraith-protocol/sdk/chains/solana";
+import * as ckb from "@wraith-protocol/sdk/chains/ckb";
+
 declare global {
-  var account: any;
-  var agent: any;
+  var wraith: Wraith;
+  var agent: WraithAgent;
+  var chain: Chain;
+  var wallet: {
+    signMessage(message: string): Promise<string>;
+    address?: string;
+    [key: string]: any;
+  };
+  var apiKey: string;
+  var message: string;
+  var signature: string;
+  var metaAddress: string;
+  var recipient: string;
+  var stealthAddress: string;
+  var seed: Uint8Array;
+  var sharedSecret: Uint8Array;
+  var ephemeralPubKey: Uint8Array;
+  var spendingPubKey: Uint8Array;
+  var viewingPubKey: Uint8Array;
+  var privateKey: Uint8Array | string;
+  var publicKey: Uint8Array;
+  var stellarKeypair: any;
+  var payment: any;
   var announcement: any;
   var announcements: any;
-  var apiKey: string;
-  var bobMetaAddress: string;
-  var chain: any;
-  var chainRegistry: any;
   var config: any;
   var connector: any;
   var db: any;
   var detected: any;
-  var ephemeralPubKey: Uint8Array;
   var hash: string;
   var keys: any;
-  var message: string;
-  var metaAddress: string;
   var nameRegistry: any;
-  var payment: any;
-  var privateKey: any;
   var publicClient: any;
-  var publicKey: Uint8Array;
-  var process: any;
   var address: any;
   var setError: any;
-  var recipient: any;
   var recipientSpendingPubKey: any;
   var recipientViewingPubKey: any;
   var response: any;
-  var seed: Uint8Array;
   var sender: any;
-  var signature: Uint8Array;
-  var stealthAddress: string;
   var stealthKeys: any;
-  var wallet: any;
   var walletAddress: string;
-  var wraith: any;
   var wraithClient: any;
-  var stellarKeypair: any;
   var privateKeyBytes: Uint8Array;
-  var sharedSecret: Uint8Array;
   var ephemeralPrivateKey: Uint8Array;
-  var spendingPubKey: Uint8Array;
-  var viewingPubKey: Uint8Array;
+  var account: any;
+  var chainRegistry: any;
+  
+  var deriveStealthKeys: typeof evm.deriveStealthKeys;
+  var generateStealthAddress: typeof evm.generateStealthAddress;
+  var checkStealthAddress: typeof evm.checkStealthAddress;
+  var scanAnnouncements: typeof evm.scanAnnouncements;
+  var deriveStealthPrivateKey: typeof evm.deriveStealthPrivateKey;
+  var deriveStealthPrivateScalar: typeof evm.deriveStealthPrivateScalar;
+  var encodeStealthMetaAddress: typeof evm.encodeStealthMetaAddress;
+  var decodeStealthMetaAddress: typeof evm.decodeStealthMetaAddress;
+  var signNameRegistration: typeof evm.signNameRegistration;
+  var fetchAnnouncements: typeof evm.fetchAnnouncements;
+  var getDeployment: typeof evm.getDeployment;
+  var seedToScalar: typeof evm.seedToScalar;
+  var computeSharedSecret: typeof evm.computeSharedSecret;
+  var computeViewTag: typeof evm.computeViewTag;
+  var hashToScalar: typeof evm.hashToScalar;
+  var signWithScalar: typeof evm.signWithScalar;
+  var signSolanaTransaction: typeof evm.signSolanaTransaction;
+  var signStellarTransaction: typeof evm.signStellarTransaction;
+  var pubKeyToSolanaAddress: typeof evm.pubKeyToSolanaAddress;
+  var pubKeyToStellarAddress: typeof evm.pubKeyToStellarAddress;
+  var bytesToHex: typeof evm.bytesToHex;
+  var hexToBytes: typeof evm.hexToBytes;
+  var STEALTH_SIGNING_MESSAGE: string;
+  var SCHEME_ID: bigint;
+  var META_ADDRESS_PREFIX: string;
+
   function createWalletClient(...args: any[]): any;
   function custom(...args: any[]): any;
   function privateKeyToAccount(...args: any[]): any;
@@ -72,6 +106,8 @@ declare global {
 `;
 
 async function main() {
+  await verifyFailureFixture();
+
   const files = await findMdxFiles(repoRoot);
   const snippets = await collectSnippets(files);
   const skipped = snippets.filter((snippet) => /\bno-check\b/.test(snippet.attrs));
@@ -82,9 +118,6 @@ async function main() {
 
   try {
     await writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
-    await symlink(path.join(repoRoot, "node_modules"), path.join(tmp, "node_modules"), "dir").catch(
-      () => undefined,
-    );
 
     const snippetFiles: string[] = [];
     for (const snippet of checkable) {
@@ -125,6 +158,38 @@ async function main() {
   }
 
   console.log(`${summary}\nSnippet check passed.`);
+}
+
+async function verifyFailureFixture() {
+  console.log("Verifying failure fixture (invalid SDK call)...");
+  const tmp = await mkdtemp(path.join(tmpdir(), "wraith-failure-fixture-"));
+  try {
+    await writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
+
+    const invalidSnippetCode = `
+import { Wraith } from "@wraith-protocol/sdk";
+// Invalid SDK call: non-existent method / invalid config option
+const w = new Wraith({ invalidConfigOption: true });
+w.nonExistentMethod();
+`;
+    const snippetFile = path.join(tmp, "failure-fixture.ts");
+    await writeFile(snippetFile, `${typedPrelude}\n${invalidSnippetCode}\nexport {};\n`, "utf8");
+
+    const compilerConfig = path.join(tmp, "tsconfig.json");
+    await writeFile(
+      compilerConfig,
+      JSON.stringify(createTsConfig([snippetFile]), null, 2),
+      "utf8",
+    );
+
+    const result = await run("pnpm", ["exec", "tsc", "--noEmit", "--project", compilerConfig]);
+    if (result.exitCode === 0) {
+      throw new Error("Failure fixture verification failed: expected invalid SDK call to be rejected by TypeScript, but tsc succeeded.");
+    }
+    console.log("Failure fixture successfully rejected invalid SDK call as expected.");
+  } finally {
+    await rm(tmp, { force: true, recursive: true });
+  }
 }
 
 async function findMdxFiles(dir: string): Promise<string[]> {
@@ -176,9 +241,7 @@ function renderSnippet(snippet: Snippet) {
   const code = normalizeSnippet(snippet.code);
   const header = [
     `// Source: ${snippet.file}:${snippet.line}`,
-    // Current docs include many illustrative fragments; this keeps the first CI gate focused on malformed syntax.
-    "// @ts-nocheck",
-    ambientPrelude,
+    typedPrelude,
   ].join("\n");
 
   if (snippet.lang === "js" || snippet.lang === "javascript") {
@@ -201,7 +264,8 @@ function createTsConfig(snippetFiles: string[]) {
       module: "NodeNext",
       moduleResolution: "NodeNext",
       lib: ["ES2022", "DOM"],
-      types: [],
+      types: ["node"],
+      typeRoots: [path.join(repoRoot, "node_modules/@types")],
       strict: false,
       noImplicitAny: false,
       skipLibCheck: true,
@@ -209,6 +273,16 @@ function createTsConfig(snippetFiles: string[]) {
       allowSyntheticDefaultImports: true,
       resolveJsonModule: true,
       noEmit: true,
+      baseUrl: repoRoot,
+      paths: {
+        "@wraith-protocol/sdk": ["node_modules/@wraith-protocol/sdk/dist/index.d.ts"],
+        "@wraith-protocol/sdk/chains/evm": ["node_modules/@wraith-protocol/sdk/dist/chains/evm/index.d.ts"],
+        "@wraith-protocol/sdk/chains/stellar": ["node_modules/@wraith-protocol/sdk/dist/chains/stellar/index.d.ts"],
+        "@wraith-protocol/sdk/chains/solana": ["node_modules/@wraith-protocol/sdk/dist/chains/solana/index.d.ts"],
+        "@wraith-protocol/sdk/chains/ckb": ["node_modules/@wraith-protocol/sdk/dist/chains/ckb/index.d.ts"],
+        "@solana/web3.js": ["node_modules/@solana/web3.js"],
+        "@stellar/stellar-sdk": ["node_modules/@stellar/stellar-sdk"]
+      }
     },
     include: snippetFiles,
   };
@@ -219,7 +293,7 @@ function run(command: string, args: string[]) {
     const child = spawn(command, args, {
       cwd: repoRoot,
       env: process.env,
-      shell: false,
+      shell: process.platform === "win32",
     });
     let output = "";
 
