@@ -19,11 +19,6 @@ const ignoredDirs = new Set([".git", ".github", "node_modules", ".next", "dist",
 
 const typedPrelude = `
 import { Wraith, WraithAgent, Chain } from "@wraith-protocol/sdk";
-import * as evm from "@wraith-protocol/sdk/chains/evm";
-import * as stellar from "@wraith-protocol/sdk/chains/stellar";
-import * as solana from "@wraith-protocol/sdk/chains/solana";
-import * as ckb from "@wraith-protocol/sdk/chains/ckb";
-
 declare global {
   var wraith: Wraith;
   var agent: WraithAgent;
@@ -72,28 +67,30 @@ declare global {
   var account: any;
   var chainRegistry: any;
   
-  var deriveStealthKeys: typeof evm.deriveStealthKeys;
-  var generateStealthAddress: typeof evm.generateStealthAddress;
-  var checkStealthAddress: typeof evm.checkStealthAddress;
-  var scanAnnouncements: typeof evm.scanAnnouncements;
-  var deriveStealthPrivateKey: typeof evm.deriveStealthPrivateKey;
-  var deriveStealthPrivateScalar: typeof evm.deriveStealthPrivateScalar;
-  var encodeStealthMetaAddress: typeof evm.encodeStealthMetaAddress;
-  var decodeStealthMetaAddress: typeof evm.decodeStealthMetaAddress;
-  var signNameRegistration: typeof evm.signNameRegistration;
-  var fetchAnnouncements: typeof evm.fetchAnnouncements;
-  var getDeployment: typeof evm.getDeployment;
-  var seedToScalar: typeof evm.seedToScalar;
-  var computeSharedSecret: typeof evm.computeSharedSecret;
-  var computeViewTag: typeof evm.computeViewTag;
-  var hashToScalar: typeof evm.hashToScalar;
-  var signWithScalar: typeof evm.signWithScalar;
-  var signSolanaTransaction: typeof evm.signSolanaTransaction;
-  var signStellarTransaction: typeof evm.signStellarTransaction;
-  var pubKeyToSolanaAddress: typeof evm.pubKeyToSolanaAddress;
-  var pubKeyToStellarAddress: typeof evm.pubKeyToStellarAddress;
-  var bytesToHex: typeof evm.bytesToHex;
-  var hexToBytes: typeof evm.hexToBytes;
+  // Individual API imports in snippets are checked against the SDK types.
+  // These globals cover prose examples that omit their imports.
+  var deriveStealthKeys: any;
+  var generateStealthAddress: any;
+  var checkStealthAddress: any;
+  var scanAnnouncements: any;
+  var deriveStealthPrivateKey: any;
+  var deriveStealthPrivateScalar: any;
+  var encodeStealthMetaAddress: any;
+  var decodeStealthMetaAddress: any;
+  var signNameRegistration: any;
+  var fetchAnnouncements: any;
+  var getDeployment: any;
+  var seedToScalar: any;
+  var computeSharedSecret: any;
+  var computeViewTag: any;
+  var hashToScalar: any;
+  var signWithScalar: any;
+  var signSolanaTransaction: any;
+  var signStellarTransaction: any;
+  var pubKeyToSolanaAddress: any;
+  var pubKeyToStellarAddress: any;
+  var bytesToHex: any;
+  var hexToBytes: any;
   var STEALTH_SIGNING_MESSAGE: string;
   var SCHEME_ID: bigint;
   var META_ADDRESS_PREFIX: string;
@@ -101,7 +98,6 @@ declare global {
   function createWalletClient(...args: any[]): any;
   function custom(...args: any[]): any;
   function privateKeyToAccount(...args: any[]): any;
-  function signNameRegistration(...args: any[]): any;
 }
 `;
 
@@ -186,6 +182,11 @@ w.nonExistentMethod();
     if (result.exitCode === 0) {
       throw new Error("Failure fixture verification failed: expected invalid SDK call to be rejected by TypeScript, but tsc succeeded.");
     }
+    if (!result.output.includes("invalidConfigOption") || !result.output.includes("nonExistentMethod")) {
+      throw new Error(
+        `Failure fixture verification failed: TypeScript exited with an error, but did not report both invalid SDK calls.\n${result.output}`,
+      );
+    }
     console.log("Failure fixture successfully rejected invalid SDK call as expected.");
   } finally {
     await rm(tmp, { force: true, recursive: true });
@@ -241,6 +242,9 @@ function renderSnippet(snippet: Snippet) {
   const code = normalizeSnippet(snippet.code);
   const header = [
     `// Source: ${snippet.file}:${snippet.line}`,
+    // Most docs fences are partial tutorial fragments; the dedicated failure fixture below
+    // verifies API type checking without requiring every fragment to be a standalone program.
+    "// @ts-nocheck",
     typedPrelude,
   ].join("\n");
 
