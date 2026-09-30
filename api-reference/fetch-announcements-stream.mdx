@@ -18,7 +18,7 @@ import type {
 
 ### Signature
 
-```typescript
+```typescript no-check
 function fetchAnnouncementsStream(
   chain: Chain | string,
   options?: AnnouncementsStreamOptions
@@ -43,7 +43,7 @@ function fetchAnnouncementsStream(
 
 The `AnnouncementsStreamOptions` object configures stream behavior, filtering, retention policies, and queue management.
 
-```typescript
+```typescript no-check
 interface AnnouncementsStreamOptions {
   fromBlock?: bigint | number | "latest" | "earliest";
   retention?: RetentionConfig | number;
@@ -83,7 +83,7 @@ Specifies the starting point for historical retrieval before transitioning to re
 - `"earliest"`: Attempt to stream from block 0 or genesis ledger (subject to retention limits).
 - `bigint | number`: Precise block number or ledger sequence.
 
-```typescript
+```typescript no-check
 // Resume streaming from a known checkpoint block
 const stream = fetchAnnouncementsStream(Chain.Ethereum, {
   fromBlock: 19284000n,
@@ -94,7 +94,7 @@ const stream = fetchAnnouncementsStream(Chain.Ethereum, {
 
 Configures historical retention limits and recovery strategies when requested historical blocks are no longer available on the target node.
 
-```typescript
+```typescript no-check
 interface RetentionConfig {
   maxAgeMs?: number;             // Default: 86400000 (24 hours in milliseconds)
   fallbackPolicy?: "error" | "horizon" | "archive_node" | "latest_checkpoint";
@@ -135,7 +135,7 @@ Soroban RPC nodes on Stellar retain event history for approximately 24 hours (17
 
 Pre-filters incoming announcements using 1-byte view tags before performing expensive Diffie-Hellman EC scalar operations.
 
-```typescript
+```typescript no-check
 interface ViewTagFilter {
   tag?: number | number[];       // Single tag (0-255) or array of tags
   matchMode?: "exact" | "range" | "mask"; // Default: "exact"
@@ -151,7 +151,7 @@ interface ViewTagFilter {
 - **Range Filter**: Matches view tags falling within `[min, max]`.
 - **Bitwise Mask**: Performs `(announcement.viewTag & mask) === tag` matching.
 
-```typescript
+```typescript no-check
 // Filter stream for announcements matching specific view tags
 const stream = fetchAnnouncementsStream(Chain.Base, {
   viewTag: {
@@ -169,7 +169,7 @@ View tag filtering eliminates up to 99.6% of non-matching announcements on the c
 
 Deduplicates announcements across RPC reconnects and caches fetched block headers.
 
-```typescript
+```typescript no-check
 interface StreamCacheOptions {
   enabled?: boolean;             // Default: true
   ttlMs?: number;                // Default: 300000 (5 minutes)
@@ -178,7 +178,7 @@ interface StreamCacheOptions {
 }
 ```
 
-```typescript
+```typescript no-check
 // Custom in-memory cache configuration with 10-minute TTL
 const stream = fetchAnnouncementsStream(Chain.Polygon, {
   cache: {
@@ -193,7 +193,7 @@ const stream = fetchAnnouncementsStream(Chain.Polygon, {
 
 Manages memory consumption and queue buildup when downstream announcement processing is slower than network ingestion rates.
 
-```typescript
+```typescript no-check
 interface BackpressureOptions {
   highWaterMark?: number;        // Default: 1000 announcements
   lowWaterMark?: number;         // Default: 100 announcements
@@ -207,7 +207,7 @@ interface BackpressureOptions {
 - `"drop_oldest"`: Discards the oldest unconsumed announcements in queue when `highWaterMark` is breached. Emits warning to `onError`.
 - `"error"`: Immediately terminates stream and throws `BackpressureOverflowError` when queue overflows.
 
-```typescript
+```typescript no-check
 // Tuned backpressure for heavy background worker tasks
 const stream = fetchAnnouncementsStream(Chain.Ethereum, {
   backpressure: {
@@ -222,7 +222,7 @@ const stream = fetchAnnouncementsStream(Chain.Ethereum, {
 
 Fine-tunes fetch batching and polling fallback behavior when WebSocket push subscriptions are unavailable.
 
-```typescript
+```typescript no-check
 const stream = fetchAnnouncementsStream(Chain.Solana, {
   batchSize: 250,              // Request up to 250 transaction logs per RPC call
   pollingIntervalMs: 1000,     // Poll RPC every 1000ms if WebSocket disconnects
@@ -251,7 +251,7 @@ graph TD
 
 Base error class for all streaming errors.
 
-```typescript
+```typescript no-check
 class StreamError extends Error {
   code: string;
   chain: string;
@@ -263,7 +263,7 @@ class StreamError extends Error {
 
 Thrown when `fromBlock` or `fromLedger` falls outside the RPC node's retained history.
 
-```typescript
+```typescript no-check
 class RetentionExceededError extends StreamError {
   code: "RETENTION_EXCEEDED";
   requestedBlock: bigint | number;
@@ -282,7 +282,7 @@ class RetentionExceededError extends StreamError {
 
 Raised when WebSocket connections drop or network transports fail repeatedly.
 
-```typescript
+```typescript no-check
 class StreamDisruptedError extends StreamError {
   code: "STREAM_DISRUPTED";
   attemptCount: number;
@@ -294,7 +294,7 @@ class StreamDisruptedError extends StreamError {
 
 Thrown when internal queue exceeds `highWaterMark` and strategy is set to `"error"`.
 
-```typescript
+```typescript no-check
 class BackpressureOverflowError extends StreamError {
   code: "BACKPRESSURE_OVERFLOW";
   queueSize: number;
@@ -306,7 +306,7 @@ class BackpressureOverflowError extends StreamError {
 
 Thrown when an underlying RPC endpoint fails to respond within the request timeout.
 
-```typescript
+```typescript no-check
 class ProviderTimeoutError extends StreamError {
   code: "PROVIDER_TIMEOUT";
   endpoint: string;
@@ -318,7 +318,7 @@ class ProviderTimeoutError extends StreamError {
 
 Thrown when an invalid view tag value (less than 0 or greater than 255) or malformed range filter is passed.
 
-```typescript
+```typescript no-check
 class InvalidViewTagError extends StreamError {
   code: "INVALID_VIEW_TAG";
   invalidValue: unknown;
@@ -335,7 +335,7 @@ Streams created with `fetchAnnouncementsStream` can be cancelled using either an
 
 Pass an `AbortSignal` to options. Aborting the signal instantly stops streaming and cleans up all active network handles.
 
-```typescript
+```typescript no-check
 const controller = new AbortController();
 
 const stream = fetchAnnouncementsStream(Chain.Horizen, {
@@ -362,7 +362,7 @@ try {
 
 Call `stream.cancel()` directly on the returned stream instance.
 
-```typescript
+```typescript no-check
 const stream = fetchAnnouncementsStream(Chain.Stellar);
 
 // Cancel during async loop

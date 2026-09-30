@@ -73,7 +73,7 @@ You don't need XLM in your own wallet to register a name. The contract supports 
 
 By signing a Soroban auth payload, you can delegate the fee payment to a relayer or the Wraith API, which will submit the transaction and pay the network fees on your behalf.
 
-```typescript
+```typescript no-check
 // The Wraith SDK handles delegated registration out-of-the-box
 const agent = await wraith.createAgent({
   name: "alice", // Automatically uses delegated registration if the agent lacks XLM

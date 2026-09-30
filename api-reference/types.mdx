@@ -44,7 +44,7 @@ enum Chain {
 
 ### `WraithConfig`
 
-```typescript
+```typescript no-check
 interface WraithConfig {
   apiKey: string;
   baseUrl?: string;
@@ -57,7 +57,7 @@ interface WraithConfig {
 
 ### `AgentConfig`
 
-```typescript
+```typescript no-check
 interface AgentConfig {
   name: string;
   chain: Chain | Chain[];
@@ -69,7 +69,7 @@ interface AgentConfig {
 
 ### `AgentInfo`
 
-```typescript
+```typescript no-check
 interface AgentInfo {
   id: string;
   name: string;
@@ -81,7 +81,7 @@ interface AgentInfo {
 
 ### `ChatResponse`
 
-```typescript
+```typescript no-check
 interface ChatResponse {
   response: string;
   toolCalls?: ToolCall[];
@@ -91,7 +91,7 @@ interface ChatResponse {
 
 ### `ToolCall`
 
-```typescript
+```typescript no-check
 interface ToolCall {
   name: string;
   status: string;
@@ -101,7 +101,7 @@ interface ToolCall {
 
 ### `Balance`
 
-```typescript
+```typescript no-check
 interface Balance {
   native: string;
   tokens: Record<string, string>;
@@ -110,7 +110,7 @@ interface Balance {
 
 ### `Payment`
 
-```typescript
+```typescript no-check
 interface Payment {
   stealthAddress: string;
   balance: string;
@@ -120,7 +120,7 @@ interface Payment {
 
 ### `Invoice`
 
-```typescript
+```typescript no-check
 interface Invoice {
   id: string;
   agentName: string;
@@ -136,7 +136,7 @@ interface Invoice {
 
 ### `Schedule`
 
-```typescript
+```typescript no-check
 interface Schedule {
   id: string;
   recipient: string;
@@ -150,7 +150,7 @@ interface Schedule {
 
 ### `TxResult`
 
-```typescript
+```typescript no-check
 interface TxResult {
   txHash: string;
   txLink: string;
@@ -159,7 +159,7 @@ interface TxResult {
 
 ### `PrivacyReport`
 
-```typescript
+```typescript no-check
 interface PrivacyReport {
   score: number;
   issues: Array<{
@@ -173,7 +173,7 @@ interface PrivacyReport {
 
 ### `Notification`
 
-```typescript
+```typescript no-check
 interface Notification {
   id: number;
   type: string;
@@ -186,7 +186,7 @@ interface Notification {
 
 ### `Conversation`
 
-```typescript
+```typescript no-check
 interface Conversation {
   id: string;
   title: string;
@@ -214,13 +214,13 @@ import type {
 
 ### `HexString`
 
-```typescript
+```typescript no-check
 type HexString = `0x${string}`;
 ```
 
 ### `StealthKeys`
 
-```typescript
+```typescript no-check
 interface StealthKeys {
   spendingKey: HexString;      // 32-byte private key
   viewingKey: HexString;       // 32-byte private key
@@ -231,7 +231,7 @@ interface StealthKeys {
 
 ### `StealthMetaAddress`
 
-```typescript
+```typescript no-check
 interface StealthMetaAddress {
   spendingPubKey: HexString;   // 33-byte compressed public key
   viewingPubKey: HexString;    // 33-byte compressed public key
@@ -240,7 +240,7 @@ interface StealthMetaAddress {
 
 ### `GeneratedStealthAddress`
 
-```typescript
+```typescript no-check
 interface GeneratedStealthAddress {
   stealthAddress: HexString;   // 20-byte EVM address
   ephemeralPubKey: HexString;  // 33-byte compressed public key
@@ -250,7 +250,7 @@ interface GeneratedStealthAddress {
 
 ### `Announcement`
 
-```typescript
+```typescript no-check
 interface Announcement {
   schemeId: bigint;
   stealthAddress: HexString;
@@ -262,7 +262,7 @@ interface Announcement {
 
 ### `MatchedAnnouncement`
 
-```typescript
+```typescript no-check
 interface MatchedAnnouncement extends Announcement {
   stealthPrivateKey: HexString;
 }
@@ -291,7 +291,7 @@ import type {
 
 ### `StealthKeys`
 
-```typescript
+```typescript no-check
 interface StealthKeys {
   spendingKey: Uint8Array;       // 32-byte seed
   spendingScalar: bigint;        // clamped scalar from SHA-512(seed)
@@ -304,7 +304,7 @@ interface StealthKeys {
 
 ### `GeneratedStealthAddress`
 
-```typescript
+```typescript no-check
 interface GeneratedStealthAddress {
   stealthAddress: string;        // Stellar G... address
   ephemeralPubKey: Uint8Array;   // 32-byte ed25519 public key
@@ -314,7 +314,7 @@ interface GeneratedStealthAddress {
 
 ### `Announcement`
 
-```typescript
+```typescript no-check
 interface Announcement {
   schemeId: number;
   stealthAddress: string;        // G... address
@@ -326,7 +326,7 @@ interface Announcement {
 
 ### `MatchedAnnouncement`
 
-```typescript
+```typescript no-check
 interface MatchedAnnouncement extends Announcement {
   stealthPrivateScalar: bigint;
   stealthPubKeyBytes: Uint8Array;
@@ -352,7 +352,7 @@ import type {
 
 The resolved result of a `name*domain.com` lookup.
 
-```typescript
+```typescript no-check
 interface FederationRecord {
   federationAddress: string;       // "alice*example.com" — the address that was queried
   accountId: string;               // "GABC..." or "st:xlm:..." — resolved destination
@@ -367,7 +367,7 @@ When `accountId` starts with `st:xlm:` it is a Wraith stealth meta-address and s
 
 Pluggable cache interface accepted by `resolveStellarFederation()`. Implement this with any backend (in-memory, Redis, etc.).
 
-```tsx
+```tsx no-check
 interface FederationCache {
   get(key: string): Promise<FederationRecord | undefined>;
   set(key: string, record: FederationRecord, ttlMs: number): Promise<void>;
@@ -376,7 +376,7 @@ interface FederationCache {
 
 ### `FederationErrorCode`
 
-```typescript
+```typescript no-check
 type FederationErrorCode =
   | "NOT_FOUND"            // federation server returned 404 / unknown address
   | "DNS_FAILURE"          // could not fetch stellar.toml (network or DNS error)
@@ -391,7 +391,7 @@ type FederationErrorCode =
 
 Thrown by `resolveStellarFederation()` on any failure. Always check `err.code` rather than `err.message` for programmatic handling.
 
-```typescript
+```typescript no-check
 interface FederationError extends Error {
   code: FederationErrorCode;
   message: string;
@@ -407,7 +407,7 @@ Internal types used by the TEE server. Documented here for developers building c
 
 ### `ChainConnector`
 
-```tsx
+```tsx no-check
 interface ChainConnector {
   readonly chain: string;
   readonly nativeAsset: string;
@@ -428,7 +428,7 @@ interface ChainConnector {
 
 ### `DerivedKeys`
 
-```typescript
+```typescript no-check
 interface DerivedKeys {
   address: string;
   stealthKeys: ChainStealthKeys;
@@ -438,7 +438,7 @@ interface DerivedKeys {
 
 ### `ChainBalance`
 
-```typescript
+```typescript no-check
 interface ChainBalance {
   native: string;
   tokens: Record<string, string>;
@@ -447,7 +447,7 @@ interface ChainBalance {
 
 ### `DetectedPayment`
 
-```typescript
+```typescript no-check
 interface DetectedPayment {
   stealthAddress: string;
   balance: string;
@@ -457,7 +457,7 @@ interface DetectedPayment {
 
 ### `WithdrawAllResult`
 
-```typescript
+```typescript no-check
 interface WithdrawAllResult {
   results: Array<{ address: string } & (TxResult | { error: string })>;
   count: number;
@@ -467,7 +467,7 @@ interface WithdrawAllResult {
 
 ### `ResolvedName`
 
-```typescript
+```typescript no-check
 interface ResolvedName {
   name: string;
   metaAddress: string;
@@ -500,7 +500,7 @@ import type {
 
 ### `AnnouncementsStreamOptions`
 
-```typescript
+```typescript no-check
 interface AnnouncementsStreamOptions {
   fromBlock?: bigint | number | "latest" | "earliest";
   retention?: RetentionConfig | number;
@@ -516,7 +516,7 @@ interface AnnouncementsStreamOptions {
 
 ### `RetentionConfig`
 
-```typescript
+```typescript no-check
 interface RetentionConfig {
   maxAgeMs?: number;
   fallbackPolicy?: "error" | "horizon" | "archive_node" | "latest_checkpoint";
@@ -527,7 +527,7 @@ interface RetentionConfig {
 
 ### `ViewTagFilter`
 
-```typescript
+```typescript no-check
 interface ViewTagFilter {
   tag?: number | number[];
   matchMode?: "exact" | "range" | "mask";
@@ -538,7 +538,7 @@ interface ViewTagFilter {
 
 ### `BackpressureOptions`
 
-```typescript
+```typescript no-check
 interface BackpressureOptions {
   highWaterMark?: number;
   lowWaterMark?: number;

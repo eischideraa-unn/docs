@@ -49,7 +49,7 @@ import {
 
 ## Types
 
-```typescript
+```typescript no-check
 interface StealthKeys {
   spendingKey: Uint8Array;       // 32-byte seed
   spendingScalar: bigint;        // clamped scalar from SHA-512(seed)
@@ -263,7 +263,7 @@ const scalar = deriveStealthPrivateScalar(
 
 Sign a message using a raw scalar instead of a seed. Required because stealth private keys are derived scalars that can't be used with `Keypair.fromRawEd25519Seed()`.
 
-```typescript
+```typescript no-check
 const signature = signWithScalar(messageBytes, stealthScalar, stealthPubKey);
 // Uint8Array (64-byte ed25519 signature)
 ```
@@ -274,7 +274,7 @@ The stealth scalar `(spendingScalar + hashScalar) % L` is not necessarily clampe
 
 Sign a Stellar transaction hash with a stealth private scalar.
 
-```typescript
+```typescript no-check
 const sig = signStellarTransaction(txHash, stealthScalar, stealthPubKey);
 // Uint8Array (64-byte signature)
 // Add this to the transaction envelope before submitting
@@ -302,7 +302,7 @@ const { spendingPubKey, viewingPubKey } = decodeStealthMetaAddress("st:xlm:abc12
 
 Derive a stealth public key from a spending public key and hash scalar.
 
-```typescript
+```typescript no-check
 const stealthPub = deriveStealthPubKey(spendingPubKey, hashScalar);
 // Uint8Array (32 bytes)
 ```
@@ -311,7 +311,7 @@ const stealthPub = deriveStealthPubKey(spendingPubKey, hashScalar);
 
 Convert a 32-byte ed25519 public key to a Stellar `G...` address.
 
-```typescript
+```typescript no-check
 const address = pubKeyToStellarAddress(publicKeyBytes);
 // "GABC..."
 ```
@@ -332,7 +332,7 @@ const bytes = hexToBytes("abcd");
 
 ## End-to-End Flow
 
-```typescript
+```typescript no-check
 import {
   deriveStealthKeys,
   generateStealthAddress,

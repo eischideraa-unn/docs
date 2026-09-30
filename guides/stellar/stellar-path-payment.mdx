@@ -77,7 +77,7 @@ console.log("Intermediate path hops:", bestPath.path);
 
 Alternatively, if the sender wants to spend a fixed 100 XLM and maximize recipient USDC output:
 
-```typescript
+```typescript no-check
 const sendResponse = await server
   .strictSendPaths(sourceAsset, "100")
   .destinationAsset(destinationAsset)

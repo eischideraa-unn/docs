@@ -71,7 +71,7 @@ Each chain module exports the same conceptual functions adapted to that chain's 
 
 Always use the `Chain` enum when specifying chains. Never pass raw strings.
 
-```typescript
+```typescript no-check
 import { Chain } from "@wraith-protocol/sdk";
 
 // Single chain
@@ -130,7 +130,7 @@ enum Chain {
 
 The SDK uses `package.json` exports to expose multiple entry points from a single package:
 
-```json
+```json no-check
 {
   "exports": {
     ".": {

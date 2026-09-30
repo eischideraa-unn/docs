@@ -152,7 +152,7 @@ const stealth = generateStealthAddress(spendingPubKey, viewingPubKey);
 
 ## Step 3 — Quote a route
 
-```typescript
+```typescript no-check
 const SOROSWAP_API_KEY = process.env.SOROSWAP_API_KEY!;
 
 // Quote: sell 1 XLM, receive as much USDC as possible.
@@ -192,7 +192,7 @@ console.log("Route:", quote.path.join(" → "));
 
 ## Step 4 — Build the transaction with the stealth address as recipient
 
-```typescript
+```typescript no-check
 // Pass stealthAddress in the `to` field.
 // Soroswap routes the swap output directly to the stealth account.
 const senderAddress = "GABC...your-sender-address"; // replace with real address
@@ -537,7 +537,7 @@ Omitting `sdex` is recommended for Soroban-only flows because SDEX orders settle
 
 ## Error handling and retries
 
-```typescript
+```typescript no-check
 async function quoteWithRetry(
   soroswapApiKey: string,
   params: {

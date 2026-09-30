@@ -157,7 +157,7 @@ function deriveRecipients(metaAddresses: string[]): StealthRecipient[] {
 
 Skip sponsorship for accounts that are already funded to avoid wasting operations.
 
-```typescript
+```typescript no-check
 import { Horizon } from "@stellar/stellar-sdk";
 
 const horizon = new Horizon.Server(
@@ -297,7 +297,7 @@ async function buildSponsoredBatch(
 Because the transaction includes a Soroban invocation the fees must be calculated via simulation
 before signing. `prepareTransaction` from the Soroban RPC handles this.
 
-```typescript
+```typescript no-check
 import { rpc as SorobanRpc } from "@stellar/stellar-sdk";
 
 const soroban = new SorobanRpc.Server(
@@ -633,7 +633,7 @@ account itself has been flagged by an asset issuer.
 
 **Recovery:**
 
-```typescript
+```typescript no-check
 // Before building the batch, verify the sponsor account is in good standing
 async function verifySponsor(sponsorAddress: string): Promise<void> {
   const account = await horizon.loadAccount(sponsorAddress);
@@ -673,7 +673,7 @@ available_xlm ≥ (new_accounts_in_chunk × 1 XLM) + own_base_reserve (1 XLM) + 
 **Recovery:** Fund the sponsor account before the batch run. A sponsor for 100 recipients should
 hold at least 103 XLM (100 reserves + 1 base reserve + 2 XLM fee buffer).
 
-```typescript
+```typescript no-check
 async function checkSponsorCapacity(
   sponsorAddress: string,
   newAccountCount: number,
@@ -720,7 +720,7 @@ trustlines.
 **Fix:** Add a `ChangeTrust` operation inside the sponsorship window so the trustline reserve is
 also sponsored:
 
-```typescript
+```typescript no-check
 // Add after CreateAccount, before EndSponsoringFutureReserves
 builder.addOperation(
   Operation.changeTrust({
@@ -741,7 +741,7 @@ This increases the sponsor's reserve obligation per account from **1 XLM to 1.5 
 When a stealth address holder has spent their tokens and wants to release the paymaster's locked XLM,
 they call `AccountMerge`:
 
-```typescript
+```typescript no-check
 import { Keypair, Operation, TransactionBuilder, Networks } from "@stellar/stellar-sdk";
 import { deriveStealthPrivateScalar } from "@wraith-protocol/sdk/chains/stellar";
 

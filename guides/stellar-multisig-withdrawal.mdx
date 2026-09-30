@@ -117,7 +117,7 @@ async function buildWithdrawalTransaction(params: {
 
 ### Step 1 — Coordinator builds and distributes the XDR
 
-```typescript
+```typescript no-check
 const tx = await buildWithdrawalTransaction({
   sourceAccountId: "G...SOURCE",
   stealthAccountId: "G...STEALTH",
@@ -132,7 +132,7 @@ console.log("XDR to share:", txXdr);
 
 ### Step 2 — Each signer signs the XDR and returns their signature
 
-```typescript
+```typescript no-check
 import { Transaction } from "@stellar/stellar-sdk";
 
 function signerSign(xdr: string, signerSecret: string): string {
@@ -207,7 +207,7 @@ const fullySignedTx = attachStealthSignature(
 
 ### Step 5 — Submit
 
-```typescript
+```typescript no-check
 const result = await server.sendTransaction(fullySignedTx);
 
 let status = await server.getTransaction(result.hash);
@@ -275,7 +275,7 @@ console.log("Funds detected at:", matched.map(m => m.stealthAddress));
 
 If you lose one signer but remaining signers still meet the medium threshold, remove the lost signer immediately.
 
-```typescript
+```typescript no-check
 const removeLostSignerTx = new TransactionBuilder(sourceAccount, {
   fee: BASE_FEE,
   networkPassphrase: FUTURENET_PASSPHRASE,
@@ -307,7 +307,7 @@ If remaining signers cannot meet the medium threshold, funds in stealth addresse
 
 ### Changing the threshold
 
-```typescript
+```typescript no-check
 const changeThresholdTx = new TransactionBuilder(sourceAccount, {
   fee: BASE_FEE,
   networkPassphrase: FUTURENET_PASSPHRASE,
@@ -362,7 +362,7 @@ console.log("Multisig account configured:", setupResult.hash);
 
 ### 2. Send a stealth payment to a recipient
 
-```typescript
+```typescript no-check
 import {
   deriveStealthKeys,
   generateStealthAddress,
@@ -416,7 +416,7 @@ console.log("Detected payment at:", payment.stealthAddress);
 
 ### 4. Coordinator builds the withdrawal transaction
 
-```typescript
+```typescript no-check
 const multisigAccount = await server.getAccount(sigA.publicKey());
 
 const withdrawalTx = new TransactionBuilder(multisigAccount, {
@@ -440,7 +440,7 @@ console.log("XDR ready — distributing to signers");
 
 ### 5. Three signers sign and return signatures
 
-```typescript
+```typescript no-check
 import { Transaction } from "@stellar/stellar-sdk";
 
 function collectSig(xdr: string, keypair: Keypair): string {

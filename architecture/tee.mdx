@@ -75,7 +75,7 @@ class AgentService {
 
 Agent creation requires an EIP-191 signature (EVM) or ed25519 signature (Stellar) from the owner wallet. This proves the creator controls the wallet without revealing any private key.
 
-```typescript
+```typescript no-check
 // Verification flow
 const recoveredAddress = recoverMessageAddress({
   message: body.message,
@@ -107,7 +107,7 @@ The TEE verifies the signature matches the owner wallet before releasing the key
 
 Clients can verify the TEE is running authentic, unmodified code:
 
-```typescript
+```typescript no-check
 // GET /tee/attest/{agentId}
 const attestation = await fetch(`${baseUrl}/tee/attest/${agentId}`);
 // Returns cryptographic proof of code integrity

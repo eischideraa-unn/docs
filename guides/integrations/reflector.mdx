@@ -94,7 +94,7 @@ async function simulateContractCall(
 
 ### Connecting to the Network
 
-```typescript
+```typescript no-check
 // Connect to testnet Soroban RPC
 const server = new SorobanRpc.Server("https://soroban-testnet.stellar.org");
 
@@ -107,7 +107,7 @@ const REFLECTOR_FIAT_CONTRACT =
 
 Call `lastprice` by building a simulated transaction. The ticker is a 32-byte `BytesN<32>` ScVal — pad the ticker to 32 bytes and pass it as a `Buffer`:
 
-```typescript
+```typescript no-check
 async function fetchReflectorPrice(
   server: SorobanRpc.Server,
   ticker: string,
@@ -145,7 +145,7 @@ async function fetchReflectorPrice(
 
 Batch multiple ticker queries for efficiency. Fetch decimals once, then run all price simulations in parallel:
 
-```typescript
+```typescript no-check
 async function fetchMultiplePrices(
   server: SorobanRpc.Server,
   tickers: string[],
@@ -189,7 +189,7 @@ async function fetchMultiplePrices(
 
 Once you have the price, rendering a fiat equivalent is straightforward. Convert the crypto amount to fiat and display it alongside the native amount:
 
-```typescript
+```typescript no-check
 function renderFiatEquivalent(
   amount: number,
   asset: string,
@@ -213,7 +213,7 @@ console.log(`${xlmAmount} XLM ${renderFiatEquivalent(xlmAmount, "XLM", xlmPrice)
 
 Use the fiat equivalent in payment confirmations, balance displays, and transaction summaries:
 
-```typescript
+```typescript no-check
 async function displayPaymentWithFiat(
   agent: any,
   recipient: string,
@@ -249,7 +249,7 @@ async function displayPaymentWithFiat(
 | $1 – $1,000 | 2 decimal places | `≈ $12.34` |
 | > $1,000 | 0 decimal places | `≈ $1,234` |
 
-```typescript
+```typescript no-check
 function formatFiatSmart(value: number): string {
   if (value === 0) return "$0.00";
   const abs = Math.abs(value);
@@ -271,7 +271,7 @@ function formatFiatSmart(value: number): string {
 
 Reflector Pulse prices update every ~5 minutes. Caching with a 60-second TTL avoids redundant RPC calls while keeping fiat values fresh enough for UX. Use an in-memory cache keyed by ticker:
 
-```typescript
+```typescript no-check
 interface CacheEntry<T> {
   data: T;
   expiresAt: number;
@@ -325,7 +325,7 @@ class PriceCache {
 
 Wrap the raw fetcher with the cache so every caller gets the cached value automatically:
 
-```typescript
+```typescript no-check
 const priceCache = new PriceCache(60); // 60-second TTL
 
 async function getCachedPrice(
@@ -354,7 +354,7 @@ async function getCachedPrice(
 
 Run a purge every 5 minutes to clean up expired entries and prevent memory leaks:
 
-```typescript
+```typescript no-check
 // Purge expired cache entries every 5 minutes
 setInterval(() => {
   const purged = priceCache.purge();
@@ -374,7 +374,7 @@ Reflector's decentralized consensus provides strong availability — multiple no
 
 If the oracle is unreachable but a recent cached price exists, serve the stale value with a warning. A price from 5 minutes ago is better than no price at all for UI display purposes:
 
-```typescript
+```typescript no-check
 const MAX_STALE_AGE_MS = 10 * 60 * 1000; // 10 minutes max staleness
 
 interface PriceResult {
@@ -428,7 +428,7 @@ If the oracle is down and the 60s TTL has expired, consider serving the stale ca
 
 Maintain a configurable fallback price map updated periodically (e.g., on deploy or via a separate cron job). This is a last resort — the price will be stale but prevents the UI from breaking:
 
-```typescript
+```typescript no-check
 // Fallback prices updated on deploy or via background cron
 const FALLBACK_PRICES: Record<string, number> = {
   XLMUSD: 0.12,
@@ -449,7 +449,7 @@ async function getPriceWithLayeredFallback(
 
 Show the price source in the UI so users understand the freshness:
 
-```typescript
+```typescript no-check
 function renderPriceWithSource(result: PriceResult): string {
   const formatted = formatFiatSmart(result.price);
 

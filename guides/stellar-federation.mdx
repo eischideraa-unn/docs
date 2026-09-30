@@ -65,7 +65,7 @@ Query parameters:
 
 ### 3. Federation response
 
-```json
+```json no-check
 {
   "stellar_address": "alice*example.com",
   "account_id": "GABC...XYZ",
@@ -85,7 +85,7 @@ Query parameters:
 
 When a name is not found:
 
-```json
+```json no-check
 {
   "detail": "Account not found",
   "code": "not_found",
@@ -183,7 +183,7 @@ import {
 
 ### Types
 
-```typescript
+```typescript no-check
 interface FederationRecord {
   federationAddress: string;    // "alice*example.com"
   accountId: string;            // "GABC..." — resolved G... public key
@@ -209,7 +209,7 @@ interface FederationError {
 
 ### `resolveStellarFederation(address, options?)`
 
-```typescript
+```typescript no-check
 const result = await resolveStellarFederation("alice*example.com");
 ```
 
@@ -307,7 +307,7 @@ Federation resolution makes two HTTP requests (stellar.toml + federation GET) fo
 
 `resolveStellarFederation()` accepts a `cache` option conforming to a simple interface:
 
-```tsx
+```tsx no-check
 interface FederationCache {
   get(key: string): Promise<FederationRecord | undefined>;
   set(key: string, record: FederationRecord, ttlMs: number): Promise<void>;
@@ -347,7 +347,7 @@ const record = await resolveStellarFederation("alice*example.com", {
 
 ### Redis cache (multi-process / serverless)
 
-```typescript
+```typescript no-check
 import { createClient } from "redis";
 
 class RedisFederationCache {
@@ -396,7 +396,7 @@ Every step of federation resolution can fail. Handle each case gracefully.
 
 The `/.well-known/stellar.toml` file can't be fetched — domain is misconfigured, HTTPS cert is invalid, or the file simply doesn't exist.
 
-```typescript
+```typescript no-check
 try {
   await resolveStellarFederation("alice*notadomain.invalid");
 } catch (err) {
@@ -412,7 +412,7 @@ try {
 
 The domain has a `stellar.toml` but hasn't configured federation.
 
-```typescript
+```typescript no-check
 try {
   await resolveStellarFederation("alice*example.com");
 } catch (err) {
@@ -426,7 +426,7 @@ try {
 
 The federation server responded but doesn't know this username.
 
-```typescript
+```typescript no-check
 try {
   await resolveStellarFederation("alice*example.com");
 } catch (err) {
@@ -442,7 +442,7 @@ This is the most common failure in payment UIs. Display it inline, next to the i
 
 The federation server is reachable but returns a response missing `account_id`, or returns invalid JSON.
 
-```typescript
+```typescript no-check
 try {
   await resolveStellarFederation("alice*example.com");
 } catch (err) {
@@ -458,7 +458,7 @@ try {
 
 The federation server is too slow. Default timeout is 5 seconds; adjust with `options.timeoutMs`.
 
-```typescript
+```typescript no-check
 try {
   await resolveStellarFederation("alice*example.com");
 } catch (err) {
@@ -535,7 +535,7 @@ The hint text matches what SDF-ecosystem wallets use, so users who know federati
 
 Don't resolve on every keystroke — wait until the user pauses typing. A federation address is valid when it contains exactly one `*` and a plausible domain.
 
-```typescript
+```typescript no-check
 // Detect if the input looks like a federation address before attempting resolution
 function isFederationAddress(input: string): boolean {
   const parts = input.split("*");
@@ -624,7 +624,7 @@ If the federation server returns a stealth meta-address (`st:xlm:...`), display 
 
 When the federation record includes a memo, surface it prominently — exchange deposits will fail silently if the memo is omitted:
 
-```tsx
+```tsx no-check
 {resolved?.memoValue && (
   <div className="memo-notice" role="alert">
     <strong>Important:</strong> This address requires a{" "}
@@ -669,7 +669,7 @@ curl https://api.usewraith.xyz/agent/info/payments \
 
 ### 2. Return it from your federation server
 
-```typescript
+```typescript no-check
 // Your federation endpoint
 const user = await db.users.findUnique({ where: { federationName: username } });
 

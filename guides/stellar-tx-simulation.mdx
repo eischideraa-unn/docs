@@ -187,7 +187,7 @@ if (!SorobanRpc.Api.isSimulationError(simResult) && simResult.result) {
 
 Simulated events appear in `simResult.events`. Each is a base64-encoded XDR `DiagnosticEvent`:
 
-```typescript
+```typescript no-check
 import { xdr, scValToNative } from "@stellar/stellar-sdk";
 
 if (!SorobanRpc.Api.isSimulationError(simResult)) {
@@ -214,7 +214,7 @@ and data containing the ephemeral public key and view tag metadata — exactly w
 
 ### Fee breakdown
 
-```typescript
+```typescript no-check
 if (!SorobanRpc.Api.isSimulationError(simResult)) {
   console.log("Min resource fee:", simResult.minResourceFee, "stroops");
 

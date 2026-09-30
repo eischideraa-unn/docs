@@ -187,7 +187,7 @@ const stealth = generateStealthAddress(spendingPubKey, viewingPubKey);
 
 The Phoenix Router's `quote` function takes the input token, output token, and input amount. It returns the expected output, the optimal multi-hop path, and the aggregate fee.
 
-```typescript
+```typescript no-check
 const SENDER_PUBLIC_KEY = "GABC...your-futurenet-address"; // replace
 
 const XLM_CONTRACT  = "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC";
@@ -253,7 +253,7 @@ The Phoenix Router's `swap` function enforces two protective parameters on-chain
 - **`min_amount_out`** — the minimum acceptable output. If the actual output falls below this, the transaction reverts. Derived from the quote and your slippage tolerance.
 - **`deadline`** — a Unix timestamp (seconds). If the transaction is included after this time, it reverts. Prevents miners or relayers from holding a stale transaction and executing it later at a worse price.
 
-```typescript
+```typescript no-check
 // ─── Slippage tolerance ───────────────────────────────────────────────────────
 
 const SLIPPAGE_BPS = 50; // 0.5 %
@@ -290,7 +290,7 @@ const deadline = BigInt(Math.floor(Date.now() / 1000) + DEADLINE_SECONDS);
 
 Both the Phoenix `swap` and the Wraith `announce` are `invokeContractFunction` operations. Placing them in the same transaction makes them **atomic**: either both succeed or both revert. This guarantees the recipient can always detect a successful swap — there is no window where funds land without an announcement.
 
-```typescript
+```typescript no-check
 import {
   getDeployment,
   bytesToHex,
@@ -371,7 +371,7 @@ Soroban transactions need a resource footprint (CPU instructions, memory, read/w
 
 After the inner transaction is signed, it is wrapped in a **fee-bump transaction**. The fee-bump sponsor pays all fees (inclusion + Soroban resource), allowing the sender to use a minimally funded account or enabling a relayer to subsidize the swap flow.
 
-```typescript
+```typescript no-check
 // ─── Simulate to get the resource footprint ─────────────────────────────────
 
 const simResult = await server.simulateTransaction(innerTx);
@@ -701,7 +701,7 @@ Spending (signing a transaction from the stealth address) is covered in [Stellar
 | `insufficient_fee` | Fee-bump fee too low for Soroban resource consumption | Increase `FEE_BUMP_PER_OP`; check the simulation result for the required resource fee |
 | `FeeBumpInnerFailed` | One of the inner operations (swap or announce) failed | Check the inner transaction's result codes; re-quote and rebuild |
 
-```typescript
+```typescript no-check
 async function phoenixSwapWithRetry(opts: {
   recipientMetaAddress: string;
   xlmAmountRaw: bigint;

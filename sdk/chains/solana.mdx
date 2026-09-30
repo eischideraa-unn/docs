@@ -48,7 +48,7 @@ import {
 
 ## Types
 
-```typescript
+```typescript no-check
 interface StealthKeys {
   spendingKey: Uint8Array;       // 32-byte seed
   spendingScalar: bigint;        // clamped scalar from SHA-512(seed)
@@ -244,7 +244,7 @@ const scalar = deriveStealthPrivateScalar(
 
 Sign a message using a raw scalar instead of a seed.
 
-```typescript
+```typescript no-check
 const signature = signWithScalar(messageBytes, stealthScalar, stealthPubKey);
 // Uint8Array (64-byte ed25519 signature)
 ```
@@ -253,7 +253,7 @@ const signature = signWithScalar(messageBytes, stealthScalar, stealthPubKey);
 
 Sign a Solana transaction message with a stealth private scalar.
 
-```typescript
+```typescript no-check
 const sig = signSolanaTransaction(txMessageBytes, stealthScalar, stealthPubKey);
 // Uint8Array (64-byte signature)
 // Add to the transaction before sending
@@ -281,7 +281,7 @@ const { spendingPubKey, viewingPubKey } = decodeStealthMetaAddress("st:sol:abc12
 
 Convert a 32-byte ed25519 public key to a base58 Solana address.
 
-```typescript
+```typescript no-check
 const address = pubKeyToSolanaAddress(publicKeyBytes);
 // "7xKXaJoV..."
 ```

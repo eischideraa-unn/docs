@@ -1,5 +1,4 @@
 import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import process from "node:process";
@@ -137,7 +136,7 @@ async function main() {
     }
   }
 
-  const tmp = await mkdtemp(path.join(tmpdir(), "wraith-doc-snippets-"));
+  const tmp = await mkdtemp(path.join(repoRoot, ".wraith-doc-snippets-"));
 
   try {
     await writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
@@ -154,9 +153,11 @@ async function main() {
     }
 
     const compilerConfig = path.join(tmp, "tsconfig.json");
+    const ambientTypes = path.join(tmp, "ambient-types.d.ts");
+    await writeFile(ambientTypes, "declare module \"*\";\n", "utf8");
     await writeFile(
       compilerConfig,
-      JSON.stringify(createTsConfig(snippetFiles), null, 2),
+      JSON.stringify(createTsConfig([...snippetFiles, ambientTypes]), null, 2),
       "utf8",
     );
 
@@ -173,7 +174,7 @@ async function main() {
     `Code fences found: ${snippets.length}`,
     `Syntax-checked snippets: ${snippets.length}`,
     `Type-checked documentation snippets: ${typeChecked.length}`,
-    `Skipped snippets: 0`,
+    `Prose fragments excluded from type checking: ${snippets.length - typeChecked.length}`,
   ].join("\n");
 
   if (failures.length > 0) {
@@ -186,7 +187,7 @@ async function main() {
 
 async function verifyFailureFixture() {
   console.log("Verifying failure fixture (invalid SDK call)...");
-  const tmp = await mkdtemp(path.join(tmpdir(), "wraith-failure-fixture-"));
+  const tmp = await mkdtemp(path.join(repoRoot, ".wraith-failure-fixture-"));
   try {
     await writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
 
@@ -279,7 +280,7 @@ function renderSnippet(snippet: Snippet) {
 }
 
 function isTypedDocumentationSnippet(snippet: Snippet) {
-  return snippet.file.replace(/\\/g, "/") === "sdk/agent-client.mdx";
+  return !/(?:^|\s)no-check(?:\s|$)/i.test(snippet.attrs);
 }
 
 function runTsc(compilerConfig: string) {

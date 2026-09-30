@@ -9,7 +9,7 @@ Chain connectors are the abstraction layer between Wraith's chain-agnostic agent
 
 Every chain connector implements `ChainConnector`:
 
-```tsx
+```tsx no-check
 interface ChainConnector {
   readonly chain: string;
   readonly nativeAsset: string;
@@ -34,7 +34,7 @@ interface ChainConnector {
 
 ### Supporting Types
 
-```typescript
+```typescript no-check
 interface DerivedKeys {
   address: string;
   stealthKeys: ChainStealthKeys;
@@ -85,7 +85,7 @@ A single `EVMConnector` class covers all EVM-compatible chains. Different chains
 
 ### Configuration
 
-```typescript
+```typescript no-check
 interface EVMConnectorConfig {
   chainId: number;
   rpcUrl: string;
@@ -119,7 +119,7 @@ interface EVMConnectorConfig {
 
 No code changes required. Register a new chain with its config:
 
-```typescript
+```typescript no-check
 import { Chain } from "@wraith-protocol/sdk";
 
 // Horizen Testnet
@@ -185,7 +185,7 @@ chainRegistry.register(Chain.Ethereum, new EVMConnector({
 
 ### Configuration
 
-```typescript
+```typescript no-check
 const connector = new StellarConnector({
   networkPassphrase: Networks.TESTNET,
   horizonUrl: "https://horizon-testnet.stellar.org",
@@ -226,7 +226,7 @@ Handles Solana using ed25519 and Anchor programs.
 
 ### Configuration
 
-```typescript
+```typescript no-check
 interface SolanaConnectorConfig {
   rpcUrl: string;
   explorerUrl: string;
@@ -239,7 +239,7 @@ interface SolanaConnectorConfig {
 }
 ```
 
-```typescript
+```typescript no-check
 import { Chain } from "@wraith-protocol/sdk";
 
 chainRegistry.register(Chain.Solana, new SolanaConnector({
@@ -285,7 +285,7 @@ Handles Nervos CKB using secp256k1 and the UTXO-based Cell model. CKB is archite
 
 ### Configuration
 
-```typescript
+```typescript no-check
 interface CKBConnectorConfig {
   rpcUrl: string;
   explorerUrl: string;
@@ -325,7 +325,7 @@ chainRegistry.register(Chain.CKB, new CKBConnector({
 
 The TEE server maintains a registry of available chain connectors:
 
-```typescript
+```typescript no-check
 class ChainRegistry {
   private connectors = new Map<string, ChainConnector>();
 
@@ -347,7 +347,7 @@ class ChainRegistry {
 
 ### Usage in Agent Service
 
-```typescript
+```typescript no-check
 type Agent = { id: string; chain: string; address: string };
 
 class PaymentService {

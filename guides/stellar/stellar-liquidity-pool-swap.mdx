@@ -41,7 +41,7 @@ console.log(poolId.toString()); // 64-char hex pool ID
 
 You can look up existing pools and their reserves via Horizon:
 
-```typescript
+```typescript no-check
 const resp = await server
   .liquidityPools()
   .forAssets(assetA, assetB)
@@ -104,7 +104,7 @@ To swap through a liquidity pool, use `PathPaymentStrictSend` or `PathPaymentStr
 
 ### Strict Send (pay YXLM, receive USDC)
 
-```typescript
+```typescript no-check
 import { Operation, Asset } from "@stellar/stellar-sdk";
 
 const swapTx = new TransactionBuilder(senderAccount, {
@@ -127,7 +127,7 @@ const swapTx = new TransactionBuilder(senderAccount, {
 
 ### Strict Receive (pay YXLM, receive exactly N USDC)
 
-```typescript
+```typescript no-check
 const swapTx = new TransactionBuilder(senderAccount, {
   fee: "100",
   networkPassphrase: NETWORK,
@@ -152,7 +152,7 @@ const swapTx = new TransactionBuilder(senderAccount, {
 
 If you know a specific pool has the best rate, you can supply its asset pair as an intermediate path. The network will route through that pool:
 
-```typescript
+```typescript no-check
 const poolAsset = new Asset(
   "YXLM",
   yxlmIssuer,
@@ -186,7 +186,7 @@ When swapping through a liquidity pool, the effective exchange rate depends on t
 
 Use Horizon's path finding to estimate the expected output before building the transaction:
 
-```typescript
+```typescript no-check
 const paths = await server
   .strictSendPaths()
   .sourceAsset(new Asset("YXLM", yxlmIssuer))
@@ -210,13 +210,13 @@ const minOutput = expectedOutput * (1 - SLIPPAGE_BPS / 10000);
 
 For `pathPaymentStrictSend`, set `destMin` to the minimum output you'll accept:
 
-```typescript
+```typescript no-check
 const destMin = minOutput.toFixed(7); // USDC has 7 decimals
 ```
 
 For `pathPaymentStrictReceive`, set `sendMax` to the maximum input you're willing to spend:
 
-```typescript
+```typescript no-check
 const sendMax = (expectedInput * (1 + SLIPPAGE_BPS / 10000)).toFixed(7);
 ```
 
@@ -233,7 +233,7 @@ const sendMax = (expectedInput * (1 + SLIPPAGE_BPS / 10000)).toFixed(7);
 
 For manual slippage calculations without path finding:
 
-```typescript
+```typescript no-check
 const poolResp = await server
   .liquidityPools()
   .forAssets(
@@ -445,7 +445,7 @@ console.log("Announce tx hash:", announceResult.hash);
 
 #### Step 5 — Recipient scans and detects
 
-```typescript
+```typescript no-check
 import {
   fetchAnnouncements,
   scanAnnouncements,
@@ -483,7 +483,7 @@ The recipient can then withdraw the USDC using `signStellarTransaction` with the
 
 If you want to provide liquidity to a pool and stealth-announce separate from any swap, the `LiquidityPoolDeposit` operation works alongside the announce transaction:
 
-```typescript
+```typescript no-check
 // Transaction 1: Provide liquidity
 const depositTx = new TransactionBuilder(account, {
   fee: "100",

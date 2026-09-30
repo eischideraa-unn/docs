@@ -34,7 +34,7 @@ Create a new agent with a `.wraith` name.
 
 **Request:**
 
-```typescript
+```typescript no-check
 type CreateAgentRequest = {
   name: string;          // "alice" (becomes alice.wraith)
   chain: string;         // "horizen" | "stellar" | "ethereum" | ...
@@ -46,7 +46,7 @@ type CreateAgentRequest = {
 
 **Response:**
 
-```typescript
+```typescript no-check
 type AgentInfoResponse = {
   id: string;            // UUID
   name: string;          // "alice"
@@ -104,7 +104,7 @@ Returns balance, pending invoices, and other stats.
 
 **Response:**
 
-```typescript
+```typescript no-check
 type InvoiceResponse = {
   balance: string;
   tokens: Record<string, string>;
@@ -125,7 +125,7 @@ Export the agent's private key. Requires a fresh wallet signature.
 
 **Request:**
 
-```typescript
+```typescript no-check
 {
   signature: string;     // fresh signature from owner wallet
   message: string;       // signed message
@@ -134,7 +134,7 @@ Export the agent's private key. Requires a fresh wallet signature.
 
 **Response:**
 
-```typescript
+```typescript no-check
 {
   secret: string;        // "0x..." — the agent's private key
 }
@@ -154,7 +154,7 @@ Send a natural language message to the AI agent.
 
 **Request:**
 
-```typescript
+```typescript no-check
 type ChatRequest = {
   message: string;
   conversationId?: string;  // continue existing conversation
@@ -163,7 +163,7 @@ type ChatRequest = {
 
 **Response:**
 
-```typescript
+```typescript no-check
 type ChatResponse = {
   response: string;          // agent's text reply
   toolCalls?: ToolCall[];    // tools the agent executed
@@ -171,7 +171,7 @@ type ChatResponse = {
 };
 ```
 
-```typescript
+```typescript no-check
 interface ToolCall {
   name: string;              // "send_payment", "scan_payments", etc.
   status: string;            // "success" or "error"
@@ -191,7 +191,7 @@ GET /agent/:id/conversations
 
 **Response:** `Conversation[]`
 
-```typescript
+```typescript no-check
 interface Conversation {
   id: string;
   title: string;
@@ -242,7 +242,7 @@ GET /invoice/:id
 
 **Response:**
 
-```typescript
+```typescript no-check
 {
   id: string;
   agentName: string;
@@ -276,14 +276,14 @@ GET /agent/:id/notifications
 
 **Response:**
 
-```typescript
+```typescript no-check
 type NotificationsResponse = {
   notifications: Notification[];
   unreadCount: number;
 };
 ```
 
-```typescript
+```typescript no-check
 interface Notification {
   id: number;
   type: string;
@@ -318,7 +318,7 @@ GET /health
 
 **Response:**
 
-```typescript
+```typescript no-check
 {
   status: "ok";
 }
@@ -346,7 +346,7 @@ Returns cryptographic proof that the TEE is running authentic code and the agent
 
 All errors return JSON with a `message` field:
 
-```typescript
+```typescript no-check
 {
   message: string;
   statusCode: number;
