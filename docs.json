@@ -98,6 +98,7 @@
             "pages": [
               "reference/audits",
               "reference/auditor-guide",
+              "reference/contract-registry",
               "reference/error-codes",
               "reference/security-disclosure",
               "reference/sep-compatibility",

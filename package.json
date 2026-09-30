@@ -5,6 +5,7 @@
   "scripts": {
     "check:snippets": "tsx scripts/check-snippets.ts",
     "check:nav-coverage": "node scripts/check-nav-coverage.mjs",
+    "check:contract-registry": "node scripts/check-contract-registry.mjs",
     "check:stellar-testnet": "tsx scripts/check-stellar-testnet-snippets.ts",
     "generate:stellar-reference": "tsx scripts/generate-stellar-reference.ts",
     "check:stellar-reference": "tsx scripts/generate-stellar-reference.ts --check --allow-missing",
@@ -13,12 +14,12 @@
     "test:playground": "playwright test --config scripts/playground/tests/playwright.config.ts",
     "mint:validate": "mint validate",
     "mint:broken-links": "mint broken-links",
-    "test": "npm run check:snippets && npm run check:nav-coverage"
+    "test": "npm run check:snippets && npm run check:nav-coverage && npm run check:contract-registry"
   },
   "dependencies": {
     "@solana/web3.js": "^1.95.0",
     "@stellar/stellar-sdk": "^13.1.0",
-    "@wraith-protocol/sdk": "^1.4.5"
+    "@wraith-protocol/sdk": "1.4.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
