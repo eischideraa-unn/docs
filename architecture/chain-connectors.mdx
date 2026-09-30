@@ -347,17 +347,27 @@ class ChainRegistry {
 
 ### Usage in Agent Service
 
-```typescript no-check
-async sendPayment(agentId: string, recipient: string, amount: string) {
-  const agent = await this.db.agents.findOneBy({ id: agentId });
-  const connector = this.chainRegistry.get(agent.chain);
-  const stealthKeys = await this.tee.deriveAgentStealthKeys(agentId, agent.chain);
-  return connector.sendPayment({
-    senderAddress: agent.address,
-    senderStealthKeys: stealthKeys,
-    recipientMetaAddress: recipient,
-    amount,
-  });
+```typescript
+type Agent = { id: string; chain: string; address: string };
+
+class PaymentService {
+  constructor(
+    private db: any,
+    private chainRegistry: any,
+    private tee: any,
+  ) {}
+
+  async sendPayment(agentId: string, recipient: string, amount: string) {
+    const agent: Agent = await this.db.agents.findOneBy({ id: agentId });
+    const connector = this.chainRegistry.get(agent.chain);
+    const stealthKeys = await this.tee.deriveAgentStealthKeys(agentId, agent.chain);
+    return connector.sendPayment({
+      senderAddress: agent.address,
+      senderStealthKeys: stealthKeys,
+      recipientMetaAddress: recipient,
+      amount,
+    });
+  }
 }
 ```
 

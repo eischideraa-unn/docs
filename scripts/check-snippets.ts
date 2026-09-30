@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import process from "node:process";
+import ts from "typescript";
 
 type Snippet = {
   attrs: string;
@@ -18,11 +19,20 @@ const checkableLanguages = new Set(["ts", "tsx", "typescript", "js", "javascript
 const ignoredDirs = new Set([".git", ".github", "node_modules", ".next", "dist", "build"]);
 
 const typedPrelude = `
-import { Wraith, WraithAgent, Chain } from "@wraith-protocol/sdk";
+import {
+  Wraith as __FixtureWraith,
+  WraithAgent as __FixtureWraithAgent,
+  Chain as __FixtureChain,
+} from "@wraith-protocol/sdk";
+import * as __fixtureEvm from "@wraith-protocol/sdk/chains/evm";
+import * as __fixtureStellar from "@wraith-protocol/sdk/chains/stellar";
+import * as __fixtureSolana from "@wraith-protocol/sdk/chains/solana";
+import * as __fixtureCkb from "@wraith-protocol/sdk/chains/ckb";
 declare global {
-  var wraith: Wraith;
-  var agent: WraithAgent;
-  var chain: Chain;
+  var Chain: typeof __FixtureChain;
+  var wraith: __FixtureWraith;
+  var agent: __FixtureWraithAgent;
+  var chain: __FixtureChain;
   var wallet: {
     signMessage(message: string): Promise<string>;
     address?: string;
@@ -67,33 +77,32 @@ declare global {
   var account: any;
   var chainRegistry: any;
   
-  // Individual API imports in snippets are checked against the SDK types.
-  // These globals cover prose examples that omit their imports.
-  var deriveStealthKeys: any;
-  var generateStealthAddress: any;
-  var checkStealthAddress: any;
-  var scanAnnouncements: any;
-  var deriveStealthPrivateKey: any;
-  var deriveStealthPrivateScalar: any;
-  var encodeStealthMetaAddress: any;
-  var decodeStealthMetaAddress: any;
-  var signNameRegistration: any;
-  var fetchAnnouncements: any;
-  var getDeployment: any;
-  var seedToScalar: any;
-  var computeSharedSecret: any;
-  var computeViewTag: any;
-  var hashToScalar: any;
-  var signWithScalar: any;
-  var signSolanaTransaction: any;
-  var signStellarTransaction: any;
-  var pubKeyToSolanaAddress: any;
-  var pubKeyToStellarAddress: any;
-  var bytesToHex: any;
-  var hexToBytes: any;
-  var STEALTH_SIGNING_MESSAGE: string;
-  var SCHEME_ID: bigint;
-  var META_ADDRESS_PREFIX: string;
+  // Fragments that omit imports still receive the real public API signatures.
+  var deriveStealthKeys: typeof __fixtureEvm.deriveStealthKeys;
+  var generateStealthAddress: typeof __fixtureEvm.generateStealthAddress;
+  var checkStealthAddress: typeof __fixtureEvm.checkStealthAddress;
+  var scanAnnouncements: typeof __fixtureEvm.scanAnnouncements;
+  var deriveStealthPrivateKey: typeof __fixtureEvm.deriveStealthPrivateKey;
+  var deriveStealthPrivateScalar: typeof __fixtureStellar.deriveStealthPrivateScalar;
+  var encodeStealthMetaAddress: typeof __fixtureEvm.encodeStealthMetaAddress;
+  var decodeStealthMetaAddress: typeof __fixtureEvm.decodeStealthMetaAddress;
+  var signNameRegistration: typeof __fixtureEvm.signNameRegistration;
+  var fetchAnnouncements: typeof __fixtureEvm.fetchAnnouncements;
+  var getDeployment: typeof __fixtureEvm.getDeployment;
+  var seedToScalar: typeof __fixtureStellar.seedToScalar;
+  var computeSharedSecret: typeof __fixtureStellar.computeSharedSecret;
+  var computeViewTag: typeof __fixtureStellar.computeViewTag;
+  var hashToScalar: typeof __fixtureStellar.hashToScalar;
+  var signWithScalar: typeof __fixtureStellar.signWithScalar;
+  var signSolanaTransaction: typeof __fixtureSolana.signSolanaTransaction;
+  var signStellarTransaction: typeof __fixtureStellar.signStellarTransaction;
+  var pubKeyToSolanaAddress: typeof __fixtureSolana.pubKeyToSolanaAddress;
+  var pubKeyToStellarAddress: typeof __fixtureStellar.pubKeyToStellarAddress;
+  var bytesToHex: typeof __fixtureStellar.bytesToHex;
+  var hexToBytes: typeof __fixtureStellar.hexToBytes;
+  var STEALTH_SIGNING_MESSAGE: typeof __fixtureEvm.STEALTH_SIGNING_MESSAGE;
+  var SCHEME_ID: typeof __fixtureEvm.SCHEME_ID;
+  var META_ADDRESS_PREFIX: typeof __fixtureEvm.META_ADDRESS_PREFIX;
 
   function createWalletClient(...args: any[]): any;
   function custom(...args: any[]): any;
@@ -106,17 +115,35 @@ async function main() {
 
   const files = await findMdxFiles(repoRoot);
   const snippets = await collectSnippets(files);
-  const skipped = snippets.filter((snippet) => /\bno-check\b/.test(snippet.attrs));
-  const checkable = snippets.filter((snippet) => !/\bno-check\b/.test(snippet.attrs));
-
+  const typeChecked = snippets.filter(isTypedDocumentationSnippet);
   const failures: string[] = [];
+  for (const snippet of snippets) {
+    const rendered = renderSnippet(snippet);
+    if (/^\s*\/\/\s*@ts-nocheck\b/m.test(rendered)) {
+      failures.push(`${snippet.file}:${snippet.line}: rendered snippets must not disable TypeScript checking`);
+    }
+
+    const result = ts.transpileModule(rendered, {
+      fileName: `snippet-${snippet.index}.${snippet.lang === "tsx" ? "tsx" : "ts"}`,
+      compilerOptions: { jsx: ts.JsxEmit.Preserve, target: ts.ScriptTarget.ES2022 },
+      reportDiagnostics: true,
+    });
+    for (const diagnostic of result.diagnostics ?? []) {
+      if (diagnostic.category === ts.DiagnosticCategory.Error) {
+        failures.push(
+          `${snippet.file}:${snippet.line}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`,
+        );
+      }
+    }
+  }
+
   const tmp = await mkdtemp(path.join(tmpdir(), "wraith-doc-snippets-"));
 
   try {
     await writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
 
     const snippetFiles: string[] = [];
-    for (const snippet of checkable) {
+    for (const snippet of typeChecked) {
       const snippetFile = path.join(
         tmp,
         `snippet-${snippet.index}.${snippet.lang === "tsx" ? "tsx" : "ts"}`,
@@ -133,9 +160,9 @@ async function main() {
       "utf8",
     );
 
-    const result = await run("pnpm", ["exec", "tsc", "--noEmit", "--project", compilerConfig]);
+    const result = await runTsc(compilerConfig);
     if (result.exitCode !== 0) {
-      failures.push(appendSourceMap(result.output.trim(), checkable));
+      failures.push(appendSourceMap(result.output.trim(), typeChecked));
     }
   } finally {
     await rm(tmp, { force: true, recursive: true });
@@ -144,8 +171,9 @@ async function main() {
   const summary = [
     `MDX files scanned: ${files.length}`,
     `Code fences found: ${snippets.length}`,
-    `Checked snippets: ${checkable.length}`,
-    `Skipped no-check snippets: ${skipped.length}`,
+    `Syntax-checked snippets: ${snippets.length}`,
+    `Type-checked documentation snippets: ${typeChecked.length}`,
+    `Skipped snippets: 0`,
   ].join("\n");
 
   if (failures.length > 0) {
@@ -178,14 +206,12 @@ w.nonExistentMethod();
       "utf8",
     );
 
-    const result = await run("pnpm", ["exec", "tsc", "--noEmit", "--project", compilerConfig]);
+    const result = await runTsc(compilerConfig);
     if (result.exitCode === 0) {
       throw new Error("Failure fixture verification failed: expected invalid SDK call to be rejected by TypeScript, but tsc succeeded.");
     }
     if (!result.output.includes("invalidConfigOption") || !result.output.includes("nonExistentMethod")) {
-      throw new Error(
-        `Failure fixture verification failed: TypeScript exited with an error, but did not report both invalid SDK calls.\n${result.output}`,
-      );
+      throw new Error(`Failure fixture verification failed: TypeScript did not report both invalid SDK calls.\n${result.output}`);
     }
     console.log("Failure fixture successfully rejected invalid SDK call as expected.");
   } finally {
@@ -242,9 +268,6 @@ function renderSnippet(snippet: Snippet) {
   const code = normalizeSnippet(snippet.code);
   const header = [
     `// Source: ${snippet.file}:${snippet.line}`,
-    // Most docs fences are partial tutorial fragments; the dedicated failure fixture below
-    // verifies API type checking without requiring every fragment to be a standalone program.
-    "// @ts-nocheck",
     typedPrelude,
   ].join("\n");
 
@@ -253,6 +276,15 @@ function renderSnippet(snippet: Snippet) {
   }
 
   return `${header}\n${code}\nexport {};\n`;
+}
+
+function isTypedDocumentationSnippet(snippet: Snippet) {
+  return snippet.file.replace(/\\/g, "/") === "sdk/agent-client.mdx";
+}
+
+function runTsc(compilerConfig: string) {
+  const tscEntrypoint = path.join(repoRoot, "node_modules", "typescript", "bin", "tsc");
+  return run(process.execPath, [tscEntrypoint, "--noEmit", "--project", compilerConfig]);
 }
 
 function normalizeSnippet(code: string) {
@@ -268,6 +300,7 @@ function createTsConfig(snippetFiles: string[]) {
       module: "NodeNext",
       moduleResolution: "NodeNext",
       lib: ["ES2022", "DOM"],
+      jsx: "preserve",
       types: ["node"],
       typeRoots: [path.join(repoRoot, "node_modules/@types")],
       strict: false,
@@ -297,7 +330,7 @@ function run(command: string, args: string[]) {
     const child = spawn(command, args, {
       cwd: repoRoot,
       env: process.env,
-      shell: process.platform === "win32",
+      shell: false,
     });
     let output = "";
 

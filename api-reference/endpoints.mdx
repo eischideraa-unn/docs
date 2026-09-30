@@ -34,26 +34,26 @@ Create a new agent with a `.wraith` name.
 
 **Request:**
 
-```typescript no-check
-{
+```typescript
+type CreateAgentRequest = {
   name: string;          // "alice" (becomes alice.wraith)
   chain: string;         // "horizen" | "stellar" | "ethereum" | ...
   wallet: string;        // owner wallet address
   signature: string;     // EIP-191 or ed25519 signature
   message?: string;      // signed message (for verification)
-}
+};
 ```
 
 **Response:**
 
 ```typescript
-{
+type AgentInfoResponse = {
   id: string;            // UUID
   name: string;          // "alice"
   chain: string;         // "horizen"
   address: string;       // agent's on-chain address
   metaAddress: string;   // stealth meta-address
-}
+};
 ```
 
 ### List Agents
@@ -105,14 +105,14 @@ Returns balance, pending invoices, and other stats.
 **Response:**
 
 ```typescript
-{
+type InvoiceResponse = {
   balance: string;
   tokens: Record<string, string>;
   pendingInvoices: number;
   address: string;
   metaAddress: string;
   chain: string;
-}
+};
 ```
 
 ### Export Private Key
@@ -154,21 +154,21 @@ Send a natural language message to the AI agent.
 
 **Request:**
 
-```typescript no-check
-{
+```typescript
+type ChatRequest = {
   message: string;
   conversationId?: string;  // continue existing conversation
-}
+};
 ```
 
 **Response:**
 
-```typescript no-check
-{
+```typescript
+type ChatResponse = {
   response: string;          // agent's text reply
   toolCalls?: ToolCall[];    // tools the agent executed
   conversationId: string;    // conversation ID for continuity
-}
+};
 ```
 
 ```typescript
@@ -276,11 +276,11 @@ GET /agent/:id/notifications
 
 **Response:**
 
-```typescript no-check
-{
+```typescript
+type NotificationsResponse = {
   notifications: Notification[];
   unreadCount: number;
-}
+};
 ```
 
 ```typescript
@@ -363,22 +363,16 @@ All errors return JSON with a `message` field:
 
 ### Example
 
-```typescript no-check
-// 400 Bad Request
-{
-  "message": "Name must be 3-32 characters, lowercase alphanumeric and hyphens only",
-  "statusCode": 400
-}
-
-// 401 Unauthorized
-{
-  "message": "Invalid API key",
-  "statusCode": 401
-}
-
-// 409 Conflict
-{
-  "message": "Name 'alice' is already registered",
-  "statusCode": 409
-}
+```typescript
+const errorResponses = [
+  // 400 Bad Request
+  {
+    message: "Name must be 3-32 characters, lowercase alphanumeric and hyphens only",
+    statusCode: 400,
+  },
+  // 401 Unauthorized
+  { message: "Invalid API key", statusCode: 401 },
+  // 409 Conflict
+  { message: "Name 'alice' is already registered", statusCode: 409 },
+];
 ```
