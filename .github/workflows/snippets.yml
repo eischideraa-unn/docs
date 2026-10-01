@@ -73,6 +73,53 @@ jobs:
       - name: Check contract registry
         run: pnpm run check:contract-registry
 
+  check-snippets-extended:
+    name: Compile Rust / Python / shell / config snippets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # -----------------------------------------------------------------------
+      # Rust — pinned stable toolchain for reproducibility.
+      # -----------------------------------------------------------------------
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.78.0"
+
+      # -----------------------------------------------------------------------
+      # Python — pinned minor version; patch resolved by setup-python.
+      # -----------------------------------------------------------------------
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # bash is already present on ubuntu-latest; print versions for the log.
+      - name: Verify toolchains
+        run: |
+          rustc --version
+          python3 --version
+          bash --version | head -1
+
+      - name: Check extended snippets (Rust / Python / shell / JSON / TOML / YAML)
+        run: pnpm run check:snippets-extended
+
   stellar-testnet-snippets:
     name: Stellar snippet testnet validation
     runs-on: ubuntu-latest

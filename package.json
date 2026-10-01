@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "check:snippets": "tsx scripts/check-snippets.ts",
+    "check:snippets-extended": "tsx scripts/check-snippets-extended.ts",
     "check:nav-coverage": "node scripts/check-nav-coverage.mjs",
     "check:contract-registry": "node scripts/check-contract-registry.mjs",
     "check:stellar-testnet": "tsx scripts/check-stellar-testnet-snippets.ts",
@@ -23,7 +24,9 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
+    "@types/js-yaml": "4.0.9",
     "@types/node": "^22.10.2",
+    "js-yaml": "4.3.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
