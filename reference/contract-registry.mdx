@@ -74,7 +74,7 @@ Mainnet deployment is gated on the security audit and remediation, per the contr
 | `stealth-batch-sender` | Not deployed | v1 | — | — | — |
 
 <Warning>
-  Never substitute a guessed or placeholder contract address for a pending deployment.
+  Never substitute a guessed or placeholder contract address for a contract that has not yet been deployed.
   `getDeployment("stellar")` throws for an unknown network, and calls against an
   absent contract id fail on-chain.
 </Warning>
@@ -126,7 +126,7 @@ console.log(getCkbDeployment("ckb").contracts);
     Interface specs for stealth-announcer, stealth-registry, stealth-sender, and wraith-names
   </Card>
   <Card title="Stellar Mainnet Deployment" href="/guides/stellar-mainnet-deployment" icon="server">
-    Operator guide for the pending mainnet rollout
+    Operator guide for the mainnet rollout
   </Card>
   <Card title="Stellar Quickstart" href="/guides/stellar/stellar-quickstart" icon="bolt">
     Create an agent and send your first stealth payment against the live testnet contracts

@@ -67,6 +67,9 @@ jobs:
       - name: Check snippets
         run: pnpm run check:snippets
 
+      - name: Check placeholders
+        run: pnpm run check:placeholders
+
       - name: Check nav coverage
         run: pnpm run check:nav-coverage
 
