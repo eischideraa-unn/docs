@@ -301,23 +301,7 @@ interface CKBConnectorConfig {
 }
 ```
 
-```typescript
-import { Chain } from "@wraith-protocol/sdk";
-
-chainRegistry.register(Chain.CKB, new CKBConnector({
-  rpcUrl: "https://testnet.ckbapp.dev",
-  explorerUrl: "https://pudge.explorer.nervos.org",
-  contracts: {
-    stealthLockCodeHash: "0x...",
-    namesTypeCodeHash: "0xc133817d433f72ea16a2404adaf961524e9572c8378829a21968710d6182e20d",
-  },
-  cellDeps: {
-    stealthLock: { txHash: "0x...", index: 0 },
-    namesType: { txHash: "0x9acd640d35eadd893b358dddd415f4061fe81cb249e8ace51a866fee314141b8", index: 0 },
-  },
-  network: "testnet",
-}));
-```
+The published SDK exposes CKB helpers directly from `@wraith-protocol/sdk/chains/ckb`. It does not export a `Chain.CKB` value or a `CKBConnector` class, and CKB is not registered through the SDK's `Chain` enum. Use the standalone CKB functions described in the [CKB SDK reference](/sdk/chains/ckb).
 
 ---
 

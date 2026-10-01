@@ -27,21 +27,7 @@ The path includes the chain identifier to prevent key collision. The same agent 
 
 ### Implementation
 
-```tsx
-class TeeService {
-  async deriveAgentPrivateKey(agentId: string, chain: string): Promise<Uint8Array> {
-    // DStack derives key from hardware root secret + path
-    const raw = await dstack.getKey(`wraith/agent/${agentId}/${chain}`);
-    return sha256(raw);
-  }
-
-  async deriveAgentKeypair(agentId: string, chain: string) {
-    const connector = this.chainRegistry.get(chain);
-    const seed = await this.deriveAgentPrivateKey(agentId, chain);
-    return connector.deriveKeys(seed);
-  }
-}
-```
+The code path that reads a DStack hardware secret and connects it to Wraith's internal chain services is server implementation detail. The public SDK does not export `TeeService`, `chainRegistry`, or a DStack adapter, so there is no supported client-side code example for this internal operation. Applications should use the documented Wraith client API rather than constructing this internal service themselves.
 
 ### Per-Chain Key Derivation
 
