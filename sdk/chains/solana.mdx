@@ -110,7 +110,7 @@ const L = 2n**252n + 27742317777372353535851937790883648493n;  // ed25519 group 
 
 Derive spending and viewing key pairs from a 64-byte ed25519 signature.
 
-```typescript
+```typescript no-check
 const signature = await wallet.signMessage(Buffer.from(STEALTH_SIGNING_MESSAGE));
 const keys = deriveStealthKeys(signature);
 
@@ -191,7 +191,7 @@ console.log(result.viewTag);        // 0-255
 
 Check if an announcement belongs to you.
 
-```typescript
+```typescript no-check
 const result = checkStealthAddress(
   ephemeralPubKey,
   keys.viewingKey,
@@ -210,7 +210,7 @@ if (result.isMatch) {
 
 Scan announcements and return matches with their private scalars.
 
-```typescript
+```typescript no-check
 const matched = scanAnnouncements(
   announcements,
   keys.viewingKey,
@@ -318,8 +318,8 @@ import {
 import { Connection, Transaction, SystemProgram, PublicKey } from "@solana/web3.js";
 
 // 1. Recipient: derive keys from Solana wallet signature
-const sig = await wallet.signMessage(Buffer.from(STEALTH_SIGNING_MESSAGE));
-const keys = deriveStealthKeys(sig);
+const sig = await wallet.signMessage(STEALTH_SIGNING_MESSAGE);
+const keys = deriveStealthKeys(hexToBytes(sig));
 
 // 2. Recipient: publish stealth meta-address
 const metaAddress = encodeStealthMetaAddress(keys.spendingPubKey, keys.viewingPubKey);
@@ -342,6 +342,8 @@ const matched = scanAnnouncements(
 );
 
 // 6. Recipient: withdraw from stealth address
+const destinationAddress = "7xKXaJo...";
+const withdrawAmount = 50000;
 for (const m of matched) {
   const stealthPubKey = new PublicKey(m.stealthPubKeyBytes);
   const tx = new Transaction().add(

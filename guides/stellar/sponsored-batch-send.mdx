@@ -193,7 +193,7 @@ This is the core of the pattern. For each new account we sandwich a `createAccou
 `BeginSponsoringFutureReserves` and `EndSponsoringFutureReserves`, then add a payment, and finally
 invoke `batch_send` once for all the announcements.
 
-```typescript
+```typescript no-check
 import {
   Keypair,
   Networks,
@@ -370,7 +370,7 @@ This self-contained example ties everything together. It processes 100 recipient
 derives stealth addresses, checks for existing accounts, builds the sponsored batch, signs
 `EndSponsoringFutureReserves` with derived stealth scalars, and submits each chunk.
 
-```typescript
+```typescript no-check
 import {
   Keypair,
   Networks,

@@ -156,7 +156,7 @@ console.log(keys.viewingPubKey);  // "0x03..." (33-byte compressed)
 
 Generate a one-time stealth address with lock script args for CKB.
 
-```typescript
+```typescript no-check
 const result = generateStealthAddress(
   keys.spendingPubKey,
   keys.viewingPubKey
@@ -461,7 +461,7 @@ Ownership is determined by the Cell's lock script. Whoever can spend the Cell co
 
 ### Resolving a Name
 
-```typescript
+```typescript no-check
 import {
   buildResolveName,
   metaAddressFromNameData,

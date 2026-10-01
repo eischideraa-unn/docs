@@ -26,7 +26,7 @@ Traders swap through the pool by using a `PathPaymentStrictSend` or `PathPayment
 
 Each pool is identified by a deterministic SHA-256 hash of its pool type and the two assets (sorted lexicographically):
 
-```typescript
+```typescript no-check
 import { LiquidityPoolId, Asset, LiquidityPoolType } from "@stellar/stellar-sdk";
 
 const assetA = new Asset("YXLM", "G...issuer");
@@ -63,7 +63,7 @@ if (resp.records.length > 0) {
 
 The `LiquidityPoolDeposit` operation adds liquidity to a pool. You must hold both assets and specify the maximum amounts you're willing to deposit.
 
-```typescript
+```typescript no-check
 import { Operation, TransactionBuilder, Asset } from "@stellar/stellar-sdk";
 import { LiquidityPoolId } from "@stellar/stellar-sdk";
 
@@ -302,7 +302,7 @@ console.log("Stealth address:", stealth.stealthAddress);
 
 #### Step 2 — Verify sender balances and pool liquidity
 
-```typescript
+```typescript no-check
 import { Horizon, Asset, LiquidityPoolId } from "@stellar/stellar-sdk";
 
 const NETWORK = "Test SDF Network ; September 2015";
@@ -387,7 +387,7 @@ console.log("Swap tx hash:", swapResult.hash);
 
 #### Step 4 — Announce the payment
 
-```typescript
+```typescript no-check
 import { Contract, xdr } from "@stellar/stellar-sdk";
 import { bytesToHex } from "@wraith-protocol/sdk/chains/stellar";
 

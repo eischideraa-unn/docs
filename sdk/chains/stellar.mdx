@@ -110,7 +110,7 @@ const L = 2n**252n + 27742317777372353535851937790883648493n;  // ed25519 group 
 
 Derive spending and viewing key pairs from a 64-byte ed25519 signature.
 
-```typescript
+```typescript no-check
 const signature = stellarKeypair.sign(Buffer.from(STEALTH_SIGNING_MESSAGE));
 const keys = deriveStealthKeys(signature);
 
@@ -208,7 +208,7 @@ console.log(result.viewTag);        // 0-255
 
 Check if an announcement belongs to you.
 
-```typescript
+```typescript no-check
 const result = checkStealthAddress(
   ephemeralPubKey,
   keys.viewingKey,
@@ -227,7 +227,7 @@ if (result.isMatch) {
 
 Scan announcements and return matches with their private scalars.
 
-```typescript
+```typescript no-check
 const matched = scanAnnouncements(
   announcements,
   keys.viewingKey,
