@@ -224,11 +224,11 @@ import {
   Transaction,
   Keypair,
   Networks,
-  SorobanRpc,
+  rpc,
 } from "@stellar/stellar-sdk";
 
 const senderKeypair = Keypair.fromSecret(process.env.SENDER_SECRET!);
-const sorobanServer = new SorobanRpc.Server(
+const sorobanServer = new rpc.Server(
   "https://soroban-testnet.stellar.org"
 );
 
@@ -238,7 +238,7 @@ tx.sign(senderKeypair);
 const signedXdr = tx.toEnvelope().toXDR("base64");
 
 // Submit the signed XDR via the Soroswap send endpoint
-// (or submit directly via Horizon / SorobanRpc.Server).
+// (or submit directly via Horizon / rpc.Server).
 const sendResult = await soroswapRequest<{ txHash: string }>(
   "/send",
   { xdr: signedXdr },
@@ -264,7 +264,7 @@ import {
   Contract,
   Networks,
   nativeToScVal,
-  SorobanRpc,
+  rpc,
   TransactionBuilder,
   BASE_FEE,
   Address,
@@ -273,7 +273,7 @@ import {
 
 const deployment = getDeployment("stellar");
 const announcer = new Contract(deployment.contracts.announcer);
-const server = new SorobanRpc.Server(deployment.sorobanUrl);
+const server = new rpc.Server(deployment.sorobanUrl);
 
 // Build the announce invocation.
 // The announcer stores: schemeId, stealthAddress, ephemeralPubKey, metadata.
@@ -301,11 +301,11 @@ const announceTx = new TransactionBuilder(sourceAccount, {
 
 // Simulate to get the resource footprint, then sign and submit.
 const simResult = await server.simulateTransaction(announceTx);
-if (SorobanRpc.Api.isSimulationError(simResult)) {
+if (rpc.Api.isSimulationError(simResult)) {
   throw new Error(`Announce simulation failed: ${simResult.error}`);
 }
 
-const preparedTx = SorobanRpc.assembleTransaction(
+const preparedTx = rpc.assembleTransaction(
   announceTx,
   simResult
 ).build();
@@ -332,7 +332,7 @@ import {
   Contract,
   Networks,
   nativeToScVal,
-  SorobanRpc,
+  rpc,
   TransactionBuilder,
   BASE_FEE,
   Address,
@@ -436,7 +436,7 @@ async function swapThenStealth(opts: {
 
   // 5. Announce the stealth payment so the recipient can scan for it.
   const deployment = getDeployment("stellar");
-  const server = new SorobanRpc.Server(deployment.sorobanUrl);
+  const server = new rpc.Server(deployment.sorobanUrl);
   const announcer = new Contract(deployment.contracts.announcer);
 
   const ephemeralBytes = Buffer.from(bytesToHex(stealth.ephemeralPubKey), "hex");
@@ -460,11 +460,11 @@ async function swapThenStealth(opts: {
     .build();
 
   const simResult = await server.simulateTransaction(rawAnnounceTx);
-  if (SorobanRpc.Api.isSimulationError(simResult)) {
+  if (rpc.Api.isSimulationError(simResult)) {
     throw new Error(`Announce simulation failed: ${simResult.error}`);
   }
 
-  const announceTx = SorobanRpc.assembleTransaction(
+  const announceTx = rpc.assembleTransaction(
     rawAnnounceTx,
     simResult
   ).build();

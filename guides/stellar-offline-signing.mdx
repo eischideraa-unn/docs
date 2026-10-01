@@ -68,12 +68,12 @@ import {
   Asset,
   BASE_FEE,
 } from "@stellar/stellar-sdk";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 
 const NETWORK_PASSPHRASE = "Test SDF Future Network ; October 2022"; // futurenet
 const RPC_URL = "https://rpc-futurenet.stellar.org";
 
-const server = new SorobanRpc.Server(RPC_URL);
+const server = new rpc.Server(RPC_URL);
 
 async function buildUnsignedTransaction(params: {
   sourceAccountId: string;
@@ -179,10 +179,10 @@ Take the signed XDR back to the online machine and submit it. The private key is
 
 ```typescript
 import { Transaction } from "@stellar/stellar-sdk";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 
 async function submitSignedTransaction(signedXdr: string): Promise<void> {
-  const server = new SorobanRpc.Server(RPC_URL);
+  const server = new rpc.Server(RPC_URL);
   const tx = new Transaction(signedXdr, NETWORK_PASSPHRASE);
 
   const result = await server.sendTransaction(tx);
@@ -239,7 +239,7 @@ import {
   Asset,
   BASE_FEE,
 } from "@stellar/stellar-sdk";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 ```
 
 ### Utility: encode XDR for offline transfer
@@ -445,9 +445,9 @@ import {
   fetchAnnouncements,
   getDeployment,
 } from "@wraith-protocol/sdk/chains/stellar";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 
-const server = new SorobanRpc.Server(RPC_URL);
+const server = new rpc.Server(RPC_URL);
 
 // 1. Scan for payments (online — uses the viewing key, not the spending key)
 //    The viewing key CAN go online — it only detects payments, not spends.

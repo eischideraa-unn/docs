@@ -129,7 +129,7 @@ import {
   Contract,
   Networks,
   TransactionBuilder,
-  SorobanRpc,
+  rpc,
 } from "@stellar/stellar-sdk";
 import {
   generateStealthAddress,
@@ -205,7 +205,7 @@ if (xlmBalance < MIN_XLM_FOR_TRUSTLINE + 0.01 /* fee buffer */) {
 import { xdr, Contract as SorobanContract } from "@stellar/stellar-sdk";
 import { bytesToHex } from "@wraith-protocol/sdk/chains/stellar";
 
-const sorobanServer = new SorobanRpc.Server(deployment.sorobanUrl);
+const sorobanServer = new rpc.Server(deployment.sorobanUrl);
 const senderContractId = deployment.contracts.sender; // from getDeployment()
 
 const senderContract = new SorobanContract(senderContractId);
@@ -270,12 +270,12 @@ const tx = new TransactionBuilder(account, {
 
 // Simulate first to get the resource footprint
 const simResult = await sorobanServer.simulateTransaction(tx);
-if (SorobanRpc.Api.isSimulationError(simResult)) {
+if (rpc.Api.isSimulationError(simResult)) {
   throw new Error(`Simulation failed: ${simResult.error}`);
 }
 
 // Assemble and sign
-const assembledTx = SorobanRpc.assembleTransaction(tx, simResult).build();
+const assembledTx = rpc.assembleTransaction(tx, simResult).build();
 assembledTx.sign(senderKeypair);
 
 // Submit
@@ -388,7 +388,7 @@ async function ensureUsdcTrustline(
   destinationAddress: string,
   destinationKeypair: any, // keypair for destination
   server: Horizon.Server,
-  sorobanServer: SorobanRpc.Server
+  sorobanServer: rpc.Server
 ) {
   const account = await server.loadAccount(destinationAddress);
   const hasTrustline = account.balances.some(
@@ -541,7 +541,7 @@ const announceTx = new TransactionBuilder(senderAccount, {
   .build();
 
 const simResult = await sorobanServer.simulateTransaction(announceTx);
-const assembled = SorobanRpc.assembleTransaction(announceTx, simResult).build();
+const assembled = rpc.assembleTransaction(announceTx, simResult).build();
 assembled.sign(senderKeypair);
 await sorobanServer.sendTransaction(assembled);
 ```
@@ -594,7 +594,7 @@ Soroban fees vary with ledger state. Always simulate before submitting:
 
 ```typescript no-check
 const simResult = await sorobanServer.simulateTransaction(tx);
-if (SorobanRpc.Api.isSimulationSuccess(simResult)) {
+if (rpc.Api.isSimulationSuccess(simResult)) {
   console.log("Estimated fee (stroops):", simResult.minResourceFee);
   // 1 XLM = 10,000,000 stroops
   console.log("Estimated fee (XLM):", parseInt(simResult.minResourceFee) / 1e7);

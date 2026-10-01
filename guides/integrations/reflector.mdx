@@ -44,7 +44,7 @@ First, a helper that builds and simulates a Soroban contract invocation. This fo
 
 ```typescript
 import {
-  SorobanRpc,
+  rpc,
   TransactionBuilder,
   Networks,
   Operation,
@@ -54,7 +54,7 @@ import {
 } from "@stellar/stellar-sdk";
 
 async function simulateContractCall(
-  server: SorobanRpc.Server,
+  server: rpc.Server,
   contractId: string,
   method: string,
   args: xdr.ScVal[],
@@ -96,7 +96,7 @@ async function simulateContractCall(
 
 ```typescript no-check
 // Connect to testnet Soroban RPC
-const server = new SorobanRpc.Server("https://soroban-testnet.stellar.org");
+const server = new rpc.Server("https://soroban-testnet.stellar.org");
 
 // Fiat rates contract
 const REFLECTOR_FIAT_CONTRACT =
@@ -109,7 +109,7 @@ Call `lastprice` by building a simulated transaction. The ticker is a 32-byte `B
 
 ```typescript no-check
 async function fetchReflectorPrice(
-  server: SorobanRpc.Server,
+  server: rpc.Server,
   ticker: string,
   sourcePublicKey: string
 ): Promise<{ price: number; decimals: number }> {
@@ -147,7 +147,7 @@ Batch multiple ticker queries for efficiency. Fetch decimals once, then run all 
 
 ```typescript no-check
 async function fetchMultiplePrices(
-  server: SorobanRpc.Server,
+  server: rpc.Server,
   tickers: string[],
   sourcePublicKey: string
 ): Promise<Record<string, number>> {
@@ -219,7 +219,7 @@ async function displayPaymentWithFiat(
   recipient: string,
   amount: number,
   asset: string,
-  server: SorobanRpc.Server
+  server: rpc.Server
 ) {
   // Fetch current XLM/USD price from Reflector
   const { price: xlmPrice } = await fetchReflectorPrice(
@@ -329,7 +329,7 @@ Wrap the raw fetcher with the cache so every caller gets the cached value automa
 const priceCache = new PriceCache(60); // 60-second TTL
 
 async function getCachedPrice(
-  server: SorobanRpc.Server,
+  server: rpc.Server,
   ticker: string,
   sourcePublicKey: string
 ): Promise<number> {
@@ -383,7 +383,7 @@ interface PriceResult {
 }
 
 async function getPriceWithFallback(
-  server: SorobanRpc.Server,
+  server: rpc.Server,
   ticker: string,
   sourcePublicKey: string,
   fallbackPrice?: number
@@ -437,7 +437,7 @@ const FALLBACK_PRICES: Record<string, number> = {
 };
 
 async function getPriceWithLayeredFallback(
-  server: SorobanRpc.Server,
+  server: rpc.Server,
   ticker: string,
   sourcePublicKey: string
 ): Promise<PriceResult> {
@@ -481,7 +481,7 @@ A runnable example that fetches the XLM/USD price from Reflector on testnet, cac
 
 ```typescript
 import { Wraith, Chain } from "@wraith-protocol/sdk";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 
 // ─── Reflector Oracle Setup ────────────────────────────────────────
 
@@ -498,7 +498,7 @@ const FALLBACK_PRICES: Record<string, number> = {
 
 async function main() {
   // Connect to Soroban RPC
-  const server = new SorobanRpc.Server(TESTNET_RPC);
+  const server = new rpc.Server(TESTNET_RPC);
 
   // Initialize Wraith agent
   if (!process.env.WRAITH_API_KEY) throw new Error("Missing WRAITH_API_KEY");

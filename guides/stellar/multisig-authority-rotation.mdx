@@ -53,11 +53,11 @@ This keeps the account continuously authorized. The window between steps 1 and 3
 
 ```typescript
 import { Keypair, Operation, TransactionBuilder, BASE_FEE } from "@stellar/stellar-sdk";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 
 const FUTURENET_RPC = "https://rpc-futurenet.stellar.org";
 const FUTURENET_PASSPHRASE = "Test SDF Future Network ; October 2022";
-const server = new SorobanRpc.Server(FUTURENET_RPC);
+const server = new rpc.Server(FUTURENET_RPC);
 
 async function addSigner(params: {
   sourceAccountId: string;
@@ -329,9 +329,9 @@ import {
   fetchAnnouncements,
   getDeployment,
 } from "@wraith-protocol/sdk/chains/stellar";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 
-const server = new SorobanRpc.Server("https://rpc-futurenet.stellar.org");
+const server = new rpc.Server("https://rpc-futurenet.stellar.org");
 
 async function getAnnouncementsAroundRotation(rotationLedger: number) {
   const deployment = getDeployment("futurenet");
@@ -372,11 +372,11 @@ curl "https://friendbot-futurenet.stellar.org/?addr=G...SOURCE"
 
 ```typescript
 import { Keypair, Operation, TransactionBuilder, BASE_FEE, Asset } from "@stellar/stellar-sdk";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 
 const FUTURENET_RPC = "https://rpc-futurenet.stellar.org";
 const FUTURENET_PASSPHRASE = "Test SDF Future Network ; October 2022";
-const server = new SorobanRpc.Server(FUTURENET_RPC);
+const server = new rpc.Server(FUTURENET_RPC);
 
 // The account owner is sigA with master weight.
 // We'll set thresholds and add sigB + sigC.

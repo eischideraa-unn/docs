@@ -85,11 +85,11 @@ If you import chain-specific crypto modules (`@wraith-protocol/sdk/chains/evm`, 
 Use dynamic imports guarded by `import.meta.client`:
 
 ```ts
-let generateStealthMetaAddress: typeof import("@wraith-protocol/sdk/chains/evm").generateStealthMetaAddress;
+let encodeStealthMetaAddress: typeof import("@wraith-protocol/sdk/chains/evm").encodeStealthMetaAddress;
 
-if (import.meta.client) {
+if (typeof window !== "undefined") {
   const evm = await import("@wraith-protocol/sdk/chains/evm");
-  generateStealthMetaAddress = evm.generateStealthMetaAddress;
+  encodeStealthMetaAddress = evm.encodeStealthMetaAddress;
 }
 ```
 

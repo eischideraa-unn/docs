@@ -201,7 +201,7 @@ import {
   TransactionBuilder,
   Asset,
 } from "@stellar/stellar-sdk";
-import { rpc as SorobanRpc, xdr, Address, nativeToScVal } from "@stellar/stellar-sdk";
+import { rpc as rpc, xdr, Address, nativeToScVal } from "@stellar/stellar-sdk";
 import {
   getDeployment,
   createAnnounceOperation,
@@ -298,9 +298,9 @@ Because the transaction includes a Soroban invocation the fees must be calculate
 before signing. `prepareTransaction` from the Soroban RPC handles this.
 
 ```typescript no-check
-import { rpc as SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc as rpc } from "@stellar/stellar-sdk";
 
-const soroban = new SorobanRpc.Server(
+const soroban = new rpc.Server(
   process.env.STELLAR_RPC_URL ?? "https://soroban-testnet.stellar.org",
 );
 
@@ -347,13 +347,13 @@ async function submitSponsoredBatch(
   // 5. Poll for confirmation
   let getResult = await soroban.getTransaction(result.hash);
   while (
-    getResult.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND
+    getResult.status === rpc.Api.GetTransactionStatus.NOT_FOUND
   ) {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     getResult = await soroban.getTransaction(result.hash);
   }
 
-  if (getResult.status === SorobanRpc.Api.GetTransactionStatus.FAILED) {
+  if (getResult.status === rpc.Api.GetTransactionStatus.FAILED) {
     throw new Error(`Transaction finalized with FAILED status: ${result.hash}`);
   }
 
@@ -378,7 +378,7 @@ import {
   TransactionBuilder,
   Asset,
 } from "@stellar/stellar-sdk";
-import { rpc as SorobanRpc, Horizon } from "@stellar/stellar-sdk";
+import { rpc as rpc, Horizon } from "@stellar/stellar-sdk";
 import {
   decodeStealthMetaAddress,
   generateStealthAddress,
@@ -403,7 +403,7 @@ const SEND_AMOUNT  = "10";    // USDC per recipient
 const CHUNK_SIZE   = 24;      // max recipients per transaction (4N+1 ≤ 100 ops)
 
 const horizon = new Horizon.Server(HORIZON_URL);
-const soroban = new SorobanRpc.Server(RPC_URL);
+const soroban = new rpc.Server(RPC_URL);
 const deployment = getDeployment("stellar");
 const usdcAsset   = new Asset("USDC", USDC_ISSUER);
 
@@ -561,12 +561,12 @@ async function processChunk(chunk: string[], chunkIndex: number): Promise<string
   }
 
   let pollResult = await soroban.getTransaction(sendResult.hash);
-  while (pollResult.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND) {
+  while (pollResult.status === rpc.Api.GetTransactionStatus.NOT_FOUND) {
     await new Promise((r) => setTimeout(r, 2000));
     pollResult = await soroban.getTransaction(sendResult.hash);
   }
 
-  if (pollResult.status === SorobanRpc.Api.GetTransactionStatus.FAILED) {
+  if (pollResult.status === rpc.Api.GetTransactionStatus.FAILED) {
     throw new Error(`Chunk ${chunkIndex + 1} failed on-chain: ${sendResult.hash}`);
   }
 
@@ -787,7 +787,7 @@ you can test the sponsorship and account-creation mechanics in isolation:
 
 ```typescript
 import { Networks } from "@stellar/stellar-sdk";
-import { rpc as SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc as rpc } from "@stellar/stellar-sdk";
 
 const FUTURENET_RPC        = "https://rpc-futurenet.stellar.org";
 const FUTURENET_PASSPHRASE = Networks.FUTURENET;   // "Test SDF Future Network ; October 2022"
@@ -802,7 +802,7 @@ async function fundOnFuturenet(address: string): Promise<void> {
 
 // Swap these into any of the examples above to target Futurenet:
 // const horizon = new Horizon.Server("https://horizon-futurenet.stellar.org"); // if available
-const futurenetSoroban = new SorobanRpc.Server(FUTURENET_RPC);
+const futurenetSoroban = new rpc.Server(FUTURENET_RPC);
 void futurenetSoroban; // ready for use with FUTURENET_PASSPHRASE
 ```
 

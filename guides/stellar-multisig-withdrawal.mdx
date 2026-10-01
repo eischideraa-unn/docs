@@ -31,9 +31,9 @@ A stealth withdrawal is a **Payment** operation — it uses the **medium thresho
 
 ```typescript
 import { Keypair, Operation, TransactionBuilder, BASE_FEE } from "@stellar/stellar-sdk";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 
-const server = new SorobanRpc.Server("https://rpc-futurenet.stellar.org");
+const server = new rpc.Server("https://rpc-futurenet.stellar.org");
 
 const account = await server.getAccount("G...SOURCE_ACCOUNT");
 console.log(account.thresholds);
@@ -72,12 +72,12 @@ A stealth withdrawal sends funds from a stealth address to a destination. When t
 
 ```typescript
 import { Keypair, Operation, TransactionBuilder, Asset, BASE_FEE } from "@stellar/stellar-sdk";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 import { signWithScalar } from "@wraith-protocol/sdk/chains/stellar";
 
 const FUTURENET_RPC = "https://rpc-futurenet.stellar.org";
 const FUTURENET_PASSPHRASE = "Test SDF Future Network ; October 2022";
-const server = new SorobanRpc.Server(FUTURENET_RPC);
+const server = new rpc.Server(FUTURENET_RPC);
 
 async function buildWithdrawalTransaction(params: {
   sourceAccountId: string;
@@ -335,10 +335,10 @@ done
 
 ```typescript
 import { Keypair, Operation, TransactionBuilder, BASE_FEE, Asset } from "@stellar/stellar-sdk";
-import { SorobanRpc } from "@stellar/stellar-sdk";
+import { rpc } from "@stellar/stellar-sdk";
 
 const FUTURENET_PASSPHRASE = "Test SDF Future Network ; October 2022";
-const server = new SorobanRpc.Server("https://rpc-futurenet.stellar.org");
+const server = new rpc.Server("https://rpc-futurenet.stellar.org");
 
 const [sigA, sigB, sigC, sigD, sigE] = Array.from({ length: 5 }, () => Keypair.random());
 const sourceAccount = await server.getAccount(sigA.publicKey());
