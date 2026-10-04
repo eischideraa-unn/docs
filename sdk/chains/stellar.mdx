@@ -111,6 +111,8 @@ const L = 2n**252n + 27742317777372353535851937790883648493n;  // ed25519 group 
 Derive spending and viewing key pairs from a 64-byte ed25519 signature.
 
 ```typescript
+import { deriveStealthKeys } from "@wraith-protocol/sdk/chains/stellar";
+
 const signature = stellarKeypair.sign(Buffer.from(STEALTH_SIGNING_MESSAGE));
 const keys = deriveStealthKeys(signature);
 
@@ -186,6 +188,8 @@ const scalar = hashToScalar(sharedSecret);
 Generate a one-time stealth address for a Stellar recipient.
 
 ```typescript
+import { generateStealthAddress } from "@wraith-protocol/sdk/chains/stellar";
+
 const result = generateStealthAddress(
   keys.spendingPubKey,
   keys.viewingPubKey
@@ -209,6 +213,8 @@ console.log(result.viewTag);        // 0-255
 Check if an announcement belongs to you.
 
 ```typescript
+import { checkStealthAddress } from "@wraith-protocol/sdk/chains/stellar";
+
 const result = checkStealthAddress(
   ephemeralPubKey,
   keys.viewingKey,
@@ -228,6 +234,8 @@ if (result.isMatch) {
 Scan announcements and return matches with their private scalars.
 
 ```typescript
+import { scanAnnouncements } from "@wraith-protocol/sdk/chains/stellar";
+
 const matched = scanAnnouncements(
   announcements,
   keys.viewingKey,
@@ -420,6 +428,8 @@ const deployment = getDeployment("stellar");
 Fetches all stealth address announcements from the Soroban RPC for the specified network. Handles ledger range detection and pagination automatically.
 
 ```typescript
+import { scanAnnouncements } from "@wraith-protocol/sdk/chains/stellar";
+
 const announcements = await fetchAnnouncements("stellar");
 // Returns Announcement[] — ready to pass to scanAnnouncements()
 ```

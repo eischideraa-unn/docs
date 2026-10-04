@@ -157,6 +157,8 @@ console.log(keys.viewingPubKey);  // "0x03..." (33-byte compressed)
 Generate a one-time stealth address with lock script args for CKB.
 
 ```typescript
+import { generateStealthAddress } from "@wraith-protocol/sdk/chains/ckb";
+
 const result = generateStealthAddress(
   keys.spendingPubKey,
   keys.viewingPubKey
@@ -495,7 +497,7 @@ const result = await response.json();
 const cell = result.result?.objects?.[0];
 
 if (cell) {
-  const { spendingPubKey, viewingPubKey } = metaAddressFromNameData(cell.output_data);
+  const { spendingPubKey, viewingPubKey } = decodeStealthMetaAddress(metaAddressFromNameData(cell.output_data));
   const stealth = generateStealthAddress(spendingPubKey, viewingPubKey);
   // Send a stealth payment to alice.wraith on CKB
 }

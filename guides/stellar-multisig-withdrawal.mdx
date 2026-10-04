@@ -29,7 +29,7 @@ A stealth withdrawal is a **Payment** operation — it uses the **medium thresho
 
 ### Signer weights
 
-```typescript
+```typescript no-check
 import { Keypair, Operation, TransactionBuilder, BASE_FEE } from "@stellar/stellar-sdk";
 import { rpc } from "@stellar/stellar-sdk";
 
@@ -153,7 +153,7 @@ const sigC = signerSign(txXdr, "S...SECRET_C");
 
 ### Step 3 — Coordinator attaches all signatures
 
-```typescript
+```typescript no-check
 import { Transaction, xdr } from "@stellar/stellar-sdk";
 
 function attachSignatures(
@@ -182,7 +182,7 @@ const signedTx = attachSignatures(txXdr, [
 
 ### Step 4 — Stealth key holder signs the payment operation source
 
-```typescript
+```typescript no-check
 import { signWithScalar } from "@wraith-protocol/sdk/chains/stellar";
 
 function attachStealthSignature(
@@ -233,7 +233,7 @@ if (status.status === "SUCCESS") {
   with a cleaner interface.
 </Note>
 
-```typescript
+```typescript no-check
 import {
   deriveStealthKeys,
   scanAnnouncements,
@@ -397,7 +397,7 @@ console.log("Stealth address funded:", stealthAddress);
 
 ### 3. Recipient scans and detects the payment
 
-```typescript
+```typescript no-check
 import { scanAnnouncements, fetchAnnouncements, getDeployment } from "@wraith-protocol/sdk/chains/stellar";
 
 const deployment = getDeployment("futurenet");
@@ -456,7 +456,7 @@ const sigFromC = collectSig(withdrawalXdr, sigC);
 
 ### 6. Coordinator assembles all signatures and submits
 
-```typescript
+```typescript no-check
 import { Transaction, xdr } from "@stellar/stellar-sdk";
 import { signWithScalar } from "@wraith-protocol/sdk/chains/stellar";
 

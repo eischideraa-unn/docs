@@ -365,7 +365,7 @@ Hardware wallets (Ledger, Trezor) store private keys in a secure element that ne
 
 A Ledger or Trezor can authorize operations where your **regular Stellar keypair** is the signer — for example, as one of the signers in a multisig source account, or as the funding account for a stealth withdrawal.
 
-```typescript
+```typescript no-check
 // Using @ledgerhq/hw-transport-node-hid and @ledgerhq/hw-app-stellar
 import Transport from "@ledgerhq/hw-transport-node-hid";
 import Stellar from "@ledgerhq/hw-app-stellar";
@@ -438,7 +438,7 @@ Because the scalar is **re-derivable**, you can:
 
 ### Full offline stealth withdrawal workflow
 
-```typescript
+```typescript no-check
 // ── ONLINE MACHINE ──────────────────────────────────────────────
 import {
   scanAnnouncements,

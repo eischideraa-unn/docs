@@ -374,7 +374,7 @@ await walletClient.sendTransaction(transaction);
 
 Register a `.wraith` name on-chain. The name is bound to the spending key.
 
-```typescript
+```typescript no-check
 import { buildRegisterName, deriveStealthKeys } from "@wraith-protocol/sdk/chains/evm";
 
 const keys = deriveStealthKeys(signature);

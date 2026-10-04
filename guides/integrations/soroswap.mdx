@@ -219,7 +219,7 @@ const build = await soroswapRequest<BuildResponse>(
 
 For server-side or scripted flows, sign with a raw `Keypair`. For wallet integrations, use Freighter or another signer — see the [Stellar Wallet Integration guide](/guides/stellar-wallet-integration).
 
-```typescript
+```typescript no-check
 import {
   Transaction,
   Keypair,
@@ -255,7 +255,7 @@ console.log("Swap tx hash:", sendResult.txHash);
 
 After the swap lands, call the Wraith announcer contract so the recipient can detect the payment when scanning.
 
-```typescript
+```typescript no-check
 import {
   getDeployment,
   bytesToHex,

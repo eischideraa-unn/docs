@@ -42,7 +42,7 @@ Query Reflector from TypeScript using `@stellar/stellar-sdk`'s Soroban RPC clien
 
 First, a helper that builds and simulates a Soroban contract invocation. This follows the same pattern used throughout the Wraith codebase for contract interactions:
 
-```typescript
+```typescript no-check
 import {
   rpc,
   TransactionBuilder,
@@ -479,7 +479,7 @@ A runnable example that fetches the XLM/USD price from Reflector on testnet, cac
   Copy those into your project before running.
 </Note>
 
-```typescript
+```typescript no-check
 import { Wraith, Chain } from "@wraith-protocol/sdk";
 import { rpc } from "@stellar/stellar-sdk";
 

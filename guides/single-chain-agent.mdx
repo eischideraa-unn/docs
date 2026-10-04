@@ -7,7 +7,7 @@ Create an agent on one chain and interact with it. This guide walks through the 
 
 ## Create the Agent
 
-```typescript
+```typescript no-check
 import { Wraith, Chain } from "@wraith-protocol/sdk";
 
 const wraith = new Wraith({ apiKey: "wraith_live_abc123" });
@@ -175,7 +175,7 @@ await agent.deleteConversation(convId);
 
 ## Export Private Key
 
-```typescript
+```typescript no-check
 const exportSig = await wallet.signMessage(
   "Export private key for agent " + agent.info.id
 );

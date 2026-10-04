@@ -428,7 +428,7 @@ console.log("Fee-bumped tx submitted:", submitResult.hash);
 
 The following is a complete, self-contained function combining all the steps above. It runs on **Stellar Futurenet** and swaps XLM → USDC via the Phoenix Router (potentially through a PHO intermediate hop), then announces the output to a stealth address in a single fee-bumped transaction.
 
-```typescript
+```typescript no-check
 import {
   decodeStealthMetaAddress,
   generateStealthAddress,

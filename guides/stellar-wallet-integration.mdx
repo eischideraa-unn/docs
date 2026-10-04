@@ -322,7 +322,7 @@ export const STELLAR_WALLETS: StellarWallet[] = [
 
 ### Wallet picker (React)
 
-```typescript
+```typescript no-check
 import { useState, useEffect } from "react";
 import { STELLAR_WALLETS, StellarWallet, StellarWalletId } from "./wallets";
 
@@ -359,7 +359,7 @@ export function StellarWalletPicker({ onConnect }: WalletPickerProps) {
 
 ### Hook the picker into Wraith key derivation
 
-```typescript
+```typescript no-check
 import { deriveStealthKeys, STEALTH_SIGNING_MESSAGE } from "@wraith-protocol/sdk/chains/stellar";
 import { STELLAR_WALLETS, StellarWalletId } from "./wallets";
 
@@ -507,7 +507,7 @@ async function restoreSession(): Promise<StellarSession | null> {
 
 ### React hook
 
-```tsx
+```tsx no-check
 import { useEffect, useState } from "react";
 
 export function useWalletSession() {

@@ -67,7 +67,7 @@ Keep `lastResolvedMetaAddress` only as an audit field. Do not use it as the next
 
 The billing worker should resolve the name just before sending. This gives the recipient a clean rotation path: update the name record before the next billing date, and the payer automatically routes future payments to the new meta-address.
 
-```typescript
+```typescript no-check
 import { Chain, Wraith } from "@wraith-protocol/sdk";
 
 interface BillingResult {

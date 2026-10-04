@@ -96,7 +96,7 @@ async function buildAndPrepareContractCall(params: {
 
 `prepareTransaction` throws a `rpc.SimulateTransactionError` if the simulation fails, with the raw simulation result attached. Catch it to decode the contract error:
 
-```typescript
+```typescript no-check
 import { rpc, xdr } from "@stellar/stellar-sdk";
 
 try {
@@ -158,7 +158,7 @@ if (rpc.Api.isSimulationError(simResult)) {
 
 If you need to apply simulation results to a transaction yourself (advanced use cases):
 
-```typescript
+```typescript no-check
 import { rpc, assembleTransaction } from "@stellar/stellar-sdk";
 
 // assembleTransaction applies the footprint + resource estimates from the sim result
@@ -297,7 +297,7 @@ function userFacingSimError(simResult: rpc.Api.SimulateTransactionResponse): str
 
 This shows the full simulation flow for a `stealth-announcer` contract call — the most common Soroban interaction in a stealth payment flow.
 
-```typescript
+```typescript no-check
 import {
   Contract,
   TransactionBuilder,

@@ -23,6 +23,8 @@ import {
   WraithAgent as __FixtureWraithAgent,
   Chain as __FixtureChain,
 } from "@wraith-protocol/sdk";
+import * as __FixtureStellarSdk from "@stellar/stellar-sdk";
+
 import * as __fixtureEvm from "@wraith-protocol/sdk/chains/evm";
 import * as __fixtureStellar from "@wraith-protocol/sdk/chains/stellar";
 import * as __fixtureSolana from "@wraith-protocol/sdk/chains/solana";
@@ -33,7 +35,7 @@ declare global {
   var agent: __FixtureWraithAgent;
   var chain: __FixtureChain;
   var wallet: {
-    signMessage(message: string): Promise<string>;
+    signMessage(message: string | Uint8Array): Promise<string | Uint8Array>;
     address?: string;
     [key: string]: any;
   };
@@ -74,7 +76,76 @@ declare global {
   var privateKeyBytes: Uint8Array;
   var ephemeralPrivateKey: Uint8Array;
   var account: any;
-  var chainRegistry: any;
+  var chainRegistry: any;\n
+  var parseEther: (value: string) => bigint;
+  var stealth: __FixtureWraith;
+  var server: __FixtureStellarSdk.rpc.Server;
+  var walletClient: { sendTransaction: (tx: any) => Promise<string> };
+  var YXLM_ISSUER: string;
+  var USDC_ISSUER: string;
+  var NETWORK_PASSPHRASE: string;
+  var RPC_URL: string;
+  var FUTURENET_PASSPHRASE: string;
+  var rpc: typeof __FixtureStellarSdk.rpc;
+  var TransactionBuilder: typeof __FixtureStellarSdk.TransactionBuilder;
+  var Keypair: typeof __FixtureStellarSdk.Keypair;
+  var Transaction: typeof __FixtureStellarSdk.Transaction;
+  var xdr: typeof __FixtureStellarSdk.xdr;
+  var senderAddress: string;
+  var destinationAddress: string;
+  var withdrawAmount: number;
+  var amount: bigint;
+  var authData: string;
+  var clientData: string;
+  var senderKeypair: __FixtureStellarSdk.Keypair;
+  var callerKeypair: __FixtureStellarSdk.Keypair;
+  var ownerKeypair: __FixtureStellarSdk.Keypair;
+  var recipientKeys: any; // Fallback to any to avoid resolution errors
+  var viewTag: number;
+  var userMetaAddress: string;
+  var usdcContractId: string;
+  var txXdr: string;
+  var signedXdr: string;
+  var unsignedXdr: string;
+  var withdrawalXdr: string;
+  var rawTx: __FixtureStellarSdk.Transaction;
+  var signedTx: __FixtureStellarSdk.Transaction;
+  var simResult: __FixtureStellarSdk.rpc.Api.SimulateTransactionResponse;
+  var userFacingSimError: (res: any) => string;
+  var submitSignedTransaction: (tx: any) => Promise<any>;
+  var buildAndPrepareContractCall: (params: any) => Promise<__FixtureStellarSdk.Transaction>;
+  var generatePaymentLink: (params: any) => string;
+  var deployment: any;
+  var sorobanServer: __FixtureStellarSdk.rpc.Server;
+  var horizon: __FixtureStellarSdk.Horizon.Server;
+  var senderAccount: __FixtureStellarSdk.Account;
+  var yxlmIssuer: string;
+  var usdcIssuer: string;
+  var matchedAnnouncement: any;
+  var sigA: string;
+  var sigB: string;
+  var sigC: string;
+  var sigFromA: __FixtureStellarSdk.xdr.DecoratedSignature;
+  var sigFromB: __FixtureStellarSdk.xdr.DecoratedSignature;
+  var sigFromC: __FixtureStellarSdk.xdr.DecoratedSignature;
+  var NETWORK: any;
+  var SOROSWAP_API_KEY: string;
+  var soroswapRequest: any;
+  var StellarSession: any;
+  var restoreSession: any;
+  var StellarWalletId: any;
+  var STELLAR_WALLETS: any;
+  var saveSession: any;
+  var SESSION_KEY: string;
+  var StealthRecipient: any;
+  var Subscription: any;
+  var customResolver: any;
+  var EVMConnector: any;
+  var getPriceWithLayeredFallback: any;
+  var renderPriceWithSource: any;
+  var formatFiatSmart: any;
+  var build: any;
+
   
   // Fragments that omit imports still receive the real public API signatures.
   var deriveStealthKeys: typeof __fixtureEvm.deriveStealthKeys;
